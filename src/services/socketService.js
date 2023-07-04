@@ -1,18 +1,19 @@
 const socketIo = require('socket.io')
+const formatMessage = require('../utils/messageWrapper')
 
 const socketIoServer = (httpServer) => {
   const io = new socketIo.Server(httpServer)
 
   io.on('connection', (socket) => {
-    socket.emit('notice', 'Welcome to the chat')
-    socket.broadcast.emit('notice', 'A user has joined')
-    
+    socket.emit('notice', formatMessage('notice', 'Welcome to the chat'))
+    socket.broadcast.emit('notice', formatMessage('notice', 'A user has joined'))
+
     socket.on('disconnect', () => {
-      socket.emit('A user has disconnected')
+      io.emit('A user has disconnected')
     })
 
     socket.on('chatMessage', (message) => {
-      console.log(message)
+      socket.broadcast.emit('message', formatMessage('someone', message.message))
     })
   })
 

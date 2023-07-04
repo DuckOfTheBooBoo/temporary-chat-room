@@ -39,7 +39,11 @@ $(function() {
   const socket = io();
   
   socket.on('notice', (message) => {
-    createNotice(message)
+    createNotice(message.message)
+  })
+
+  socket.on('message', (message) => {
+    createChatForeign(message)
   })
 
   $('#form-message').on('submit', function(event) {
@@ -53,7 +57,10 @@ $(function() {
     }
 
     createChatOwn(data.message)
-    socket.emit('chatMessage', data.message)
+    socket.emit('chatMessage', {
+      username: 'You',
+      message: data.message
+    })
     scrollDown()
     $('#message-field').val('')
   })
