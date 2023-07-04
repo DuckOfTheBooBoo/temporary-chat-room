@@ -1,7 +1,12 @@
 $(function() {
   // eslint-disable-next-line no-undef
-  function createNotice(message) {
 
+  function scrollDown() {
+    const chatMessages = document.querySelector('.chats')
+    chatMessages.scrollTop = chatMessages.scrollHeight
+  }
+
+  function createNotice(message) {
     const msg = $('<p>').text(message)
     const noticeDiv = $('<div>').addClass('notice').append(msg)
     
@@ -22,9 +27,23 @@ $(function() {
 
   const socket = io();
   
-  socket.on('message', (message) => {
-    console.log(message)
+  socket.on('notice', (message) => {
     createNotice(message)
+  })
+
+  $('#form-message').on('submit', function(event) {
+    event.preventDefault()
+
+    const formData = new FormData(event.target)
+    const data = {}
+
+    for (const [key, val] of formData.entries()) {
+      data[key] = val
+    }
+
+    createChatOwn(data.message)
+    socket.emit('chatMessage', data.message)
+    scrollDown()
   })
   
 })
