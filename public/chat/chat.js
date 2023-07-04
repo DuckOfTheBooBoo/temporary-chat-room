@@ -25,6 +25,17 @@ $(function() {
     $('.chats').append(chatContainer)
   }
 
+  function createChatForeign(data) {
+    const chatContainer = $('<div>').addClass('chat foreign').append([
+      $('<div>').addClass('chat-name').append(
+        $('<p>').addClass('username').text(data.username)
+      ),
+      $('<p>').addClass('chat-message').text(data.message)
+    ])
+
+    $('.chats').append(chatContainer)
+  }
+
   const socket = io();
   
   socket.on('notice', (message) => {
