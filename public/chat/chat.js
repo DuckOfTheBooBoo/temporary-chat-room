@@ -44,6 +44,7 @@ $(function() {
     createChatOwn(data.message)
     socket.emit('chatMessage', data.message)
     scrollDown()
+    $('#message-field').val('')
   })
   
 })
