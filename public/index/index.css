@@ -1,0 +1,77 @@
+body {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+.container {
+    max-width: 400px;
+    margin: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+}
+
+.container .message p {
+    color: red;
+    font-weight: bold;
+    margin: 0;
+    margin-bottom: 15px;
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#form-field {
+    display: flex;
+    flex-direction: column;
+}
+
+#username-field {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.room-input-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.room-input-container p {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+#roomid-field {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+#submit-btn {
+    padding: 10px;
+    font-weight: bold;
+    font-size: large;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+#submit-btn:hover {
+    cursor: pointer;
+}
+
+#submit-btn:active {
+    background-color: rgb(211, 211, 211);
+}
