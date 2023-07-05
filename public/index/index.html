@@ -14,10 +14,22 @@
         </div>
         <div class="form-container">
             <form action="#" id="form-field">
-                <input type="text" name="username" id="username-field" placeholder="Username">
-                <p>Room ID (Leave blank to create new)</p>
-                <input type="text" placeholder="Room ID" name="roomid" id="roomid-field">
-                <button type="submit" id="submit-btn">CREATE ROOM</button>
+                <input 
+                    type="text" 
+                    name="username" 
+                    id="username-field" 
+                    placeholder="Username" 
+                    minlength="3"
+                    maxlength="10" 
+                    required>
+                <input
+                    type="text"
+                    placeholder="Room ID (Leave blank to randomize)"
+                    name="roomid" 
+                    id="roomid-field" 
+                    minlength="3"
+                    maxlength="10">
+                <button type="submit" id="submit-btn">JOIN ROOM</button>
             </form>
         </div>
     </div>
