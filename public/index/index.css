@@ -34,12 +34,14 @@ body {
 #form-field {
     display: flex;
     flex-direction: column;
+    width: 65%;
 }
 
 #username-field {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid black;
+    margin-bottom: 10px;
 }
 
 .room-input-container {
