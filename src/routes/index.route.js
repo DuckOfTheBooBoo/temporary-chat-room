@@ -1,8 +1,8 @@
 const {Router} = require('express')
-const chatPageController = require('../controllers/chatPage.controller')
+const indexPageController = require('../controllers/indexPage.controller')
 
 const router = Router()
 
-router.get('/', chatPageController)
+router.get('/', indexPageController)
 
 module.exports = router

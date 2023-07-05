@@ -2,13 +2,15 @@ require('dotenv').config()
 const express = require('express')
 const {createServer} = require('http')
 const path = require('path')
-const router = require('./src/routes/index.route')
+const indexRouter = require('./src/routes/index.route')
+const chatRouter = require('./src/routes/chat.route')
 const socketIoServer = require('./src/services/socketService')
 
 
 const app = express()
 app.use(express.static(path.join(__dirname, 'public')))
-app.use(router)
+app.use('/', indexRouter)
+app.use('/chat', chatRouter)
 
 const server = createServer(app)
 const io = socketIoServer(server)
