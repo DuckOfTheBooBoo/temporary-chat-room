@@ -12,6 +12,18 @@ $(function() {
     return randomString;
   }  
 
+  $('#video-call-checkbox').on('change', function() {
+    if (this.checked) {
+      $('#max-user').val(2)
+    }
+  })
+
+  $('#max-user').on('change', function() {
+    if ($('#video-call-checkbox').prop('checked')) {
+      $(this).val(2)
+    }
+  })
+
   $('#form-field').on('submit', function(event) {
     event.preventDefault()
 
@@ -20,12 +32,18 @@ $(function() {
 
     for (const [key, val] of formData.entries()) {
       data[key] = val
+      if (key === 'videoCall') {
+        data['videoCall'] = true
+      }
     }
+
     if (!data.roomid) {
       data.roomid = generateRandomString()
     }
 
-    window.location = `/chat?username=${data.username}&roomid=${data.roomid}`
+    console.log(data)
+
+    // window.location = `/chat?username=${data.username}&roomid=${data.roomid}`
   })
 
 

@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <div class="message">
-            <p>All chats history will be deleted if the last user in the room leaves</p>
+            <h1>Temporary Chat Room</h1>
         </div>
         <div class="form-container">
             <form action="#" id="form-field">
@@ -22,6 +22,18 @@
                     minlength="3"
                     maxlength="10" 
                     required>
+                <div class="max-user-container">
+                    <p>Max users: </p>
+                    <input
+                        type="number"
+                        name="maxUser"
+                        id="max-user"
+                        placeholder="Max users" 
+                        min="2" 
+                        max="5"
+                        value="2">
+                </div>
+                <p>Video call: <input type="checkbox" name="videoCall" id="video-call-checkbox"></p>
                 <input
                     type="text"
                     placeholder="Room ID (Leave blank to randomize)"
