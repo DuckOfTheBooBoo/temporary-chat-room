@@ -18,7 +18,6 @@ const socketIoServer = (httpServer) => {
       })
 
       socket.on('disconnect', () => {
-        // io.emit('A user has disconnected')
         const user = userLeave(socket.id)
         if (user) {
           io.to(user.roomid).emit('notice', `${user.username} has leave the chat`)
