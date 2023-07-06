@@ -25,13 +25,8 @@ function userLeave(id) {
   }
 }
 
-function getRoomUsers(roomid) {
-  return users.filter(user => user.roomid === romid)
-}
-
 module.exports = {
   userJoin,
   getCurrentUser,
-  userLeave,
-  getRoomUsers
+  userLeave
 }
