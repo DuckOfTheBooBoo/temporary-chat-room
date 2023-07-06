@@ -1,6 +1,4 @@
 $(function() {
-  // eslint-disable-next-line no-undef
-
   function scrollDown() {
     const chatMessages = document.querySelector('.chats')
     chatMessages.scrollTop = chatMessages.scrollHeight
@@ -36,8 +34,18 @@ $(function() {
     $('.chats').append(chatContainer)
   }
 
+  // eslint-disable-next-line no-undef
   const socket = io();
   
+  // eslint-disable-next-line no-undef
+  const {username, roomid} = Qs.parse(this.location.search, {
+    ignoreQueryPrefix: true
+  })
+
+  socket.emit('joinRoom', {
+    username, roomid
+  })
+
   socket.on('notice', (message) => {
     createNotice(message.message)
   })
@@ -58,7 +66,7 @@ $(function() {
 
     createChatOwn(data.message)
     socket.emit('chatMessage', {
-      username: 'You',
+      username: username,
       message: data.message
     })
     scrollDown()
