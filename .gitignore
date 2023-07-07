@@ -157,3 +157,5 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
 *eslint*
 jsconfig.json
+diagrams
+rest
