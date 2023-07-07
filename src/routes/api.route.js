@@ -1,10 +1,10 @@
 const {Router} = require('express')
-const { createRoom, getRoomsFromArray } = require('../controllers/api.controller')
+const { createRoom, getRoomAvailability } = require('../controllers/api.controller')
 
 const router = Router()
 
 router.route('/room')
-    .get(getRoomsFromArray)
+    .get(getRoomAvailability)
     .post(createRoom)
 
 module.exports = router
