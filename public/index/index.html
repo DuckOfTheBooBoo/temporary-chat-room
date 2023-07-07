@@ -16,6 +16,7 @@
         <div class="form-container">
             <!-- Create Room Form -->
             <form action="#" id="create-room-form" autocomplete="off">
+                <label for="username-field-create"><p>Username:</p></label>
                 <input 
                     type="text" 
                     name="username" 
@@ -57,11 +58,12 @@
                     maxlength="10" 
                     required
                     hidden>
+                <label for="roomid-field-join"><p>Room ID:</p></label>
                 <input
                     type="text"
                     placeholder="Room ID"
                     name="roomid" 
-                    id="roomid-field" 
+                    id="roomid-field-join" 
                     minlength="3"
                     maxlength="10"
                     required>
