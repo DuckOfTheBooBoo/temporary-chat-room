@@ -41,9 +41,18 @@ $(function() {
       data.roomid = generateRandomString()
     }
 
-    console.log(data)
-
-    // window.location = `/chat?username=${data.username}&roomid=${data.roomid}`
+    $.ajax({
+      url: '/api/room',
+      type: 'POST',
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      success: function(response) {
+        console.log(response)
+      },
+      error: function(xhr, status, error) {
+        console.error(error)
+      }
+    })
   })
 
 
