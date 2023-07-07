@@ -159,3 +159,4 @@ dist
 jsconfig.json
 diagrams
 rest
+*prettier*

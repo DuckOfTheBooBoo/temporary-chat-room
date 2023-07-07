@@ -10,23 +10,26 @@
 <body>
     <div class="container">
         <div class="message">
-            <h1>Temporary Chat Room</h1>
+            <p>Temporary Chat Room</p>
         </div>
+        <div class="border"></div>
         <div class="form-container">
-            <form action="#" id="form-field">
+            <!-- Create Room Form -->
+            <form action="#" id="create-room-form" autocomplete="off">
                 <input 
                     type="text" 
                     name="username" 
-                    id="username-field" 
+                    id="username-field-create" 
                     placeholder="Username" 
                     minlength="3"
-                    maxlength="10" 
+                    maxlength="10"
                     required>
+                <p class="text-separator"><span>CREATE A ROOM</span></p>
                 <div class="max-user-container">
                     <p>Max users: </p>
                     <input
                         type="number"
-                        name="maxUser"
+                        name="maxUsers"
                         id="max-user"
                         placeholder="Max users" 
                         min="2" 
@@ -36,12 +39,33 @@
                 <p>Video call: <input type="checkbox" name="videoCall" id="video-call-checkbox"></p>
                 <input
                     type="text"
-                    placeholder="Room ID (Leave blank to randomize)"
+                    placeholder=""
+                    name="roomid" 
+                    id="roomid-field"
+                    hidden>
+                <button type="submit" id="create-submit-btn" class="submit-btn">CREATE ROOM</button>
+            </form>
+            <!-- Join Room Form -->
+            <form action="#" id="join-room-form" autocomplete="off">
+                <p class="text-separator"><span>OR JOIN A ROOM</span></p>
+                <input 
+                    type="text" 
+                    name="username" 
+                    id="username-field-join" 
+                    placeholder="Username" 
+                    minlength="3"
+                    maxlength="10" 
+                    required
+                    hidden>
+                <input
+                    type="text"
+                    placeholder="Room ID"
                     name="roomid" 
                     id="roomid-field" 
                     minlength="3"
-                    maxlength="10">
-                <button type="submit" id="submit-btn">JOIN ROOM</button>
+                    maxlength="10"
+                    required>
+                <button type="submit" id="join-submit-btn" class="submit-btn">JOIN ROOM</button>
             </form>
         </div>
     </div>
