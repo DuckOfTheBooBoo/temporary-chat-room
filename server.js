@@ -8,6 +8,7 @@ const apiRouter = require('./src/routes/api.route')
 const socketIoServer = require('./src/services/socketService')
 
 const app = express()
+app.set('view engine', 'ejs')
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json())
 app.use('/', indexRouter)
@@ -19,6 +20,6 @@ const io = socketIoServer(server)
 
 const PORT = process.env.PORT || 8080
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is listening on 127.0.0.1:${PORT}`)
 })
