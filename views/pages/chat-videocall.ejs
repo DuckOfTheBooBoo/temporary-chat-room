@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta data-roomid=<%= roomid %>>
+    <script src="../assets/fontawesome/js/all.min.js"></script>
+    <link rel="stylesheet" href="../assets/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="chat-videocall.css">
+    <title>Chat</title>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="room-id-container">
+            <p>Room ID: <span><%= roomid %></span></p>
+        </div>
+        <!-- Chats -->
+        <div class="chats"></div>
+        <form action="" id="form-message" autocomplete="off">
+            <input type="text" placeholder="Message" id="message-field" name="message">
+            <button type="submit" id="subtmit-btn"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+    </div>
+    <div class="video-frame">
+        <div class="video" id="video-div-own">
+            <video src=""></video>
+        </div>
+        <div class="video" id="video-div-foreign">
+            <video src=""></video>
+        </div>
+    </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.0.slim.js" integrity="sha256-7GO+jepT9gJe9LB4XFf8snVOjX3iYNb0FHYr5LI1N5c=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.11.2/qs.min.js" integrity="sha512-vCegEXqPUYpZsTGz2lk0jaQ1psxtFeniVJACAXhMVxuoYa/N4nZkjoVFOxLwP7uGeQOoemiz7DQrIpRTj4IBPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>

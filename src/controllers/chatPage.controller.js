@@ -1,5 +1,7 @@
 const {join} = require('path')
 
 module.exports = (req, res) => {
-  return res.sendFile(join(__dirname, '..', '..', 'public', 'chat', 'chat.html'))
+  return res.render('pages/chat-videocall', {
+    roomid: 'Haloo'
+  })
 }
