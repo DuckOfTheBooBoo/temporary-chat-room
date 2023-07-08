@@ -24,7 +24,11 @@ $(function() {
     }
   })
 
-  $('#form-field').on('submit', function(event) {
+  $('#username-field-create').on('input', function() {
+    $('#username-field-join').val(this.value)
+  })
+
+  $('#create-room-form').on('submit', function(event) {
     event.preventDefault()
 
     const formData = new FormData(event.target)
@@ -50,7 +54,8 @@ $(function() {
         console.log(response)
       },
       error: function(xhr, status, error) {
-        console.error(error)
+        console.log(error)
+        alert(xhr.responseJSON.message)
       }
     })
   })
