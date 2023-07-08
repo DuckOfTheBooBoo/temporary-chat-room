@@ -7,7 +7,10 @@ const createRoom = (req, res) => {
     addRoom(roomid, parseInt(maxUsers), videoCall)
     return res.status(200).json({
       status: 'success',
-      message: 'Successfully created the room'
+      message: 'Successfully created the room',
+      data: {
+        roomid
+      }
     })
   } catch (error) {
     console.error(error)
@@ -37,9 +40,6 @@ const getRoomAvailability = (req, res) => {
     return res.status(200).json({
       status: 'success',
       message: 'Room available',
-      data: [
-        roomid
-      ]
     })
   }
   return res.status(404).json({
