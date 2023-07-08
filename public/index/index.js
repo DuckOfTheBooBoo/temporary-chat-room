@@ -55,5 +55,26 @@ $(function() {
     })
   })
 
+  $('#join-room-form').on('submit', function(event) {
+    event.preventDefault()
 
+    const formData = new FormData(event.target)
+    const data = {}
+
+    for (const [key, val] of formData.entries()) {
+      data[key] = val
+    }
+
+    $.ajax({
+      url: `/api/room?roomid=${data.roomid}`,
+      type: 'GET',
+      success: function(response) {
+        console.log(response)
+      },
+      error: function(xhr, status, error) {
+        console.error(error)
+        alert(xhr.responseJSON.message)
+      }
+    })
+  })
 })
