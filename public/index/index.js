@@ -1,4 +1,25 @@
 $(function() {
+  function objectToQuery(object, ignoreKeys = []) {
+    let query = '?'
+
+    if (typeof object !== 'object') {
+      throw new Error('Object parameter is not an Object!')
+    }
+
+    for (const key of Object.keys(object)) {
+      const val = object[key]
+      if (ignoreKeys.includes(key)) {
+        continue
+      }
+
+      if (key.includes(' ')) {
+        throw new Error('Key includes spaces!')
+      }
+
+      query += `${key}=${encodeURIComponent(val)}&`
+    }
+    return query
+  }
 
   function generateRandomString() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -51,7 +72,8 @@ $(function() {
       data: JSON.stringify(data),
       contentType: 'application/json',
       success: function(response) {
-        console.log(response)
+        const query = objectToQuery(data, ['maxUsers', 'videoCall'])
+        window.location.href = '/chat' + query
       },
       error: function(xhr, status, error) {
         console.log(error)
@@ -74,7 +96,8 @@ $(function() {
       url: `/api/room?roomid=${data.roomid}`,
       type: 'GET',
       success: function(response) {
-        console.log(response)
+        const query = objectToQuery(data)
+        window.location.href = '/chat' + query
       },
       error: function(xhr, status, error) {
         console.error(error)
