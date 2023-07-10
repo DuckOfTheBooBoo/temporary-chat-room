@@ -105,4 +105,11 @@ $(function() {
       }
     })
   })
+
+  // Trigger create-room-form field validity when join-submit-btn is clicked
+  $('#join-submit-btn').on('click', function() {
+    if ($('#username-field-create').val() === '') {
+      $('#create-room-form')[0].reportValidity()
+    }
+  })
 })
