@@ -29,7 +29,7 @@ const addUserToRoom = (roomid, user) => {
   room.users.push(user)
 }
 
-const removeUserInRoom = (roomid, user) => {
+const removeUserFromRoom = (roomid, user) => {
   const room = rooms.find(room => room.id === roomid)
 
   if (!room) {
@@ -50,10 +50,21 @@ const getRooms = () => {
   return rooms
 }
 
+const isVideoCall = (roomid) => {
+  const room = rooms.find(room => room.id === roomid)
+
+  if (room) {
+    return room.videoCall
+  }
+
+  throw new Error('Room not found')
+}
+
 module.exports = {
   addRoom,
   addUserToRoom, 
-  removeUserInRoom,
+  removeUserFromRoom,
   deleteRoom,
-  getRooms
+  getRooms,
+  isVideoCall
 }
