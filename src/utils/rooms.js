@@ -46,8 +46,8 @@ const deleteRoom = (roomid) => {
   rooms = rooms.filter(room => room.id !== roomid)
 }
 
-const getRooms = () => {
-  return rooms
+const getRoom = (roomid) => {
+  return rooms.find(room => room.id === roomid)
 }
 
 const isVideoCall = (roomid) => {
@@ -65,6 +65,6 @@ module.exports = {
   addUserToRoom, 
   removeUserFromRoom,
   deleteRoom,
-  getRooms,
+  getRoom,
   isVideoCall
 }

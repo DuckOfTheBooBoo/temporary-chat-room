@@ -1,6 +1,7 @@
 const socketIo = require('socket.io')
 const formatMessage = require('../utils/messageWrapper')
-const {userJoin, getCurrentUser, userLeave} = require('../utils/users')
+const {userJoin, userLeave} = require('../utils/users')
+const { addUserToRoom, removeUserFromRoom, getRoom, deleteRoom } = require('../utils/rooms')
 
 const socketIoServer = (httpServer) => {
   const io = new socketIo.Server(httpServer)
@@ -11,7 +12,7 @@ const socketIoServer = (httpServer) => {
 
       try {
         addUserToRoom(roomid, user)
-      socket.join(user.roomid)
+        socket.join(user.roomid)
       } catch (error) {
         console.error(error)
 
@@ -33,6 +34,14 @@ const socketIoServer = (httpServer) => {
         if (user) {
           io.to(user.roomid).emit('notice', `${user.username} has leave the chat`)
           removeUserFromRoom(roomid, user)
+
+          const room = getRoom(roomid)
+          if (room) {
+            if (room.users.length === 0) {
+              deleteRoom(room.id)
+            }
+          }
+
         }
       })
     })
@@ -41,7 +50,5 @@ const socketIoServer = (httpServer) => {
 
   return io
 }
-
-
 
 module.exports = socketIoServer
