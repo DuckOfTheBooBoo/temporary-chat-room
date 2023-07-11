@@ -21,12 +21,9 @@ const createRoom = (req, res) => {
   }
 }
 
-// const getRoomsFromArray = (req, res) => {
-//   return res.json(getRooms())
-// }
 
 const getRoomAvailability = (req, res) => {
-  const {roomid} = req.query
+  const {username, roomid} = req.query
   const rooms = getRooms()
   const room = rooms.find(room => room.id === roomid)
   
@@ -37,6 +34,16 @@ const getRoomAvailability = (req, res) => {
         message: 'Room is full',
       })
     }
+    // Check if username exists in room
+    for (const user of room.users) {
+      if (user.username === username) {
+        return res.status(403).json({
+          status: 'fail',
+          message: 'Username exists',
+        })
+      }
+    }
+
     return res.status(200).json({
       status: 'success',
       message: 'Room available',
