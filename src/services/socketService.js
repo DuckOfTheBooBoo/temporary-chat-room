@@ -8,7 +8,18 @@ const socketIoServer = (httpServer) => {
   io.on('connection', (socket) => {
     socket.on('joinRoom', ({username, roomid}) => {
       const user = userJoin(socket.id, username, roomid)
+
+      try {
+        addUserToRoom(roomid, user)
       socket.join(user.roomid)
+      } catch (error) {
+        console.error(error)
+
+        // Emit error message to client
+        socket.emit('errconn', error.message)
+        // Disconnect socket
+        socket.disconnect()
+      }
       
       socket.emit('notice', formatMessage('notice', 'Welcome to the chat'))
       socket.broadcast.to(user.roomid).emit('notice', formatMessage('notice', `${user.username} has joined`))
@@ -21,6 +32,7 @@ const socketIoServer = (httpServer) => {
         const user = userLeave(socket.id)
         if (user) {
           io.to(user.roomid).emit('notice', `${user.username} has leave the chat`)
+          removeUserFromRoom(roomid, user)
         }
       })
     })
