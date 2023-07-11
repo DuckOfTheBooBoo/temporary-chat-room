@@ -93,7 +93,7 @@ $(function() {
     }
 
     $.ajax({
-      url: `/api/room?roomid=${data.roomid}`,
+      url: `/api/room?username=${data.username}&roomid=${data.roomid}`,
       type: 'GET',
       success: function(response) {
         const query = objectToQuery(data)
