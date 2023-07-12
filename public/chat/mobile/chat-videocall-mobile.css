@@ -9,14 +9,129 @@ body {
     flex-direction: column;
 }
 
-.chat-container {
+.room-id-container p {
+    margin: 5px 0;
+    text-align: center;
+    font-weight: bold;
+}
+
+.video-frame {
     display: flex;
     flex-direction: column;
-    width: 25%;
-    height: 98%;
+    gap: 10px;
+    background-color: black;
+    flex-grow: 1;
+    bottom: 20px;
+    border-radius: 20px;
+}
+
+.video {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    flex: 1;
+}
+
+.video p {
+    position: absolute;
+    color: white;
+    font-weight: 800;
+    bottom: 0;
+    left: 0;
+    margin: 10px;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.buttons-container {
+    display: flex;
+    height: 100px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.buttons-container button {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: white;
     border: 1px solid black;
-    border-radius: 10px;
+}
+
+.buttons-container button:hover {
+    cursor: pointer;
+}
+
+.btn {
+    position: relative;
     padding: 5px;
+}
+
+.camera-div img {
+    height: 30px;
+    width: 30px;
+}
+
+.mic-div img{
+    height: 30px;
+    width: 30px
+}
+
+.chat-div img {
+    margin-top: 4px;
+    height: 35px;
+    width: 35px;
+}
+
+.leave-div img {
+    height: 30px;
+    width: 30px;
+}
+
+.chat-div button {
+    background: rgb(0, 110, 255);
+    border-color: rgb(0, 110, 255);
+    color: white;
+}
+
+.leave-div button{
+    background: red;
+    border-color: red;
+    color: white;
+}
+
+.unread-msg {
+    position: absolute;
+    border-radius: 50%;
+    background: red;
+    width: fit-content;
+    height: fit-content;
+    top: 0;
+    right: 0;
+}
+
+.unread-msg p {
+    padding: 4px 5px;
+    margin: 0;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.chat-container {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 98%;
+    padding: 5px;
+    border-radius: 10px;
+    background: white;
 }
 
 .chats {
@@ -115,120 +230,37 @@ body {
     cursor: pointer;
 }
 
-.room-id-container {
-
-}
-
-.room-id-container p {
-    margin: 5px 0;
-    text-align: center;
-    font-weight: bold;
-}
-
-.video-frame {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background-color: black;
-    flex-grow: 1;
-    bottom: 20px;
-    border-radius: 20px;
-}
-
-.video {
-    position: relative;
-    border-radius: 20px;
-    overflow: hidden;
-    flex: 1;
-}
-
-.video p {
-    position: absolute;
-    color: white;
-    font-weight: 800;
-    bottom: 0;
-    left: 0;
-    margin: 10px;
-}
-
-video {
+.top-heading {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    display: flex;
+    flex-direction: row;
+}
+
+#close-sheet {
+    text-align: right;
+    background: red;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 10px;
+    margin: 5px auto;
+}
+
+#close-sheet p {
+    color: white;
+    margin: 0;
+    padding: 0 10px;
+    font-weight: bold;
+    font-size: 24px;
 }
 
 .bottom-sheet {
     display: flex;
-    height: 100px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
-
-.bottom-sheet button {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background-color: white;
-    border: 1px solid black;
-}
-
-.bottom-sheet button:hover {
-    cursor: pointer;
-}
-
-.btn {
-    position: relative;
-    padding: 5px;
-}
-
-.camera-div img {
-    height: 30px;
-    width: 30px;
-}
-
-.mic-div img{
-    height: 30px;
-    width: 30px
-}
-
-.chat-div img {
-    margin-top: 4px;
-    height: 35px;
-    width: 35px;
-}
-
-.leave-div img {
-    height: 30px;
-    width: 30px;
-}
-
-.chat-div button {
-    background: rgb(0, 110, 255);
-    border-color: rgb(0, 110, 255);
-    color: white;
-}
-
-.leave-div button{
-    background: red;
-    border-color: red;
-    color: white;
-}
-
-.unread-msg {
+    flex-direction: column;
     position: absolute;
-    border-radius: 50%;
-    background: red;
-    width: fit-content;
-    height: fit-content;
-    top: 0;
-    right: 0;
-}
-
-.unread-msg p {
-    padding: 4px 5px;
-    margin: 0;
-    color: white;
-    font-weight: bold;
-    font-size: 12px;
+    bottom: 0;
+    background: white;
+    z-index: 100;
+    height: 80vh;
+    width: 100vw;
+    border-radius: 10px;
 }
