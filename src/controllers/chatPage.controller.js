@@ -1,4 +1,10 @@
 const { isVideoCall } = require("../utils/rooms")
+const { join } = require('path')
+
+const CHAT_PUBLIC_DIR = join(__dirname, '..', '..', 'public', 'chat')
+const CHAT_VIDEOCALL_MOBILE = join(CHAT_PUBLIC_DIR, 'mobile', 'chat-videocall-mobile.html')
+const CHAT_VIDEOCALL = join(CHAT_PUBLIC_DIR, 'chat-videocall.html')
+const CHAT = join(CHAT_PUBLIC_DIR, 'chat.html')
 
 const detectMobile = (userAgent) => {
   const toMatch = [
@@ -28,10 +34,10 @@ module.exports = (req, res) => {
   
   if (isVideoCall(roomid)) {
     if (isMobile) {
-      return res.render('pages/chat-videocall-mobile')
+      return res.sendFile(CHAT_VIDEOCALL_MOBILE)
     }
-    return res.render('pages/chat-videocall')
+    return res.sendFile(CHAT_VIDEOCALL)
   }
 
-  return res.render('pages/chat')
+  return res.sendFile(CHAT)
 }
