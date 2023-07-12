@@ -60,11 +60,11 @@ $(function() {
   })
   // Chats
   $('.chat-div button').on('click', function() {
-    $('.bottom-sheet').css({display: 'flex'})
+    $('.bottom-sheet').css({bottom: '0'})
     chatVisible = true
   })
   $('#close-sheet').on('click', function() {
-    $('.bottom-sheet').css({display: 'none'})
+    $('.bottom-sheet').css({bottom: '-100%'})
     chatVisible = false
   })
   // Leave

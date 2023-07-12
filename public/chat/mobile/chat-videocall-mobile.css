@@ -254,13 +254,14 @@ video {
 }
 
 .bottom-sheet {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    bottom: 0;
+    position: fixed;
+    bottom: -100%;
+    left: 0;
     background: white;
     z-index: 10;
-    height: 80vh;
-    width: 100vw;
+    height: 90vh;
+    width: 100%;
     border-radius: 10px;
+    transition: bottom 0.3s ease-in-out;
+    overflow-y: auto;
 }
