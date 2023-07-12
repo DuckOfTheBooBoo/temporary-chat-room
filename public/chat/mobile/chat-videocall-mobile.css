@@ -182,6 +182,27 @@ video {
     padding: 5px;
 }
 
+.camera-div img {
+    height: 30px;
+    width: 30px;
+}
+
+.mic-div img{
+    height: 30px;
+    width: 30px
+}
+
+.chat-div img {
+    margin-top: 4px;
+    height: 35px;
+    width: 35px;
+}
+
+.leave-div img {
+    height: 30px;
+    width: 30px;
+}
+
 .chat-div button {
     background: rgb(0, 110, 255);
     border-color: rgb(0, 110, 255);
