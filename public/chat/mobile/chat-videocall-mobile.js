@@ -59,6 +59,14 @@ $(function() {
     }
   })
   // Chats
+  $('.chat-div button').on('click', function() {
+    $('.bottom-sheet').css({display: 'flex'})
+    chatVisible = true
+  })
+  $('#close-sheet').on('click', function() {
+    $('.bottom-sheet').css({display: 'none'})
+    chatVisible = false
+  })
   // Leave
   $('.leave-div button').on('click', function() {
     const choice = confirm('Are you sure you want to leave?')
