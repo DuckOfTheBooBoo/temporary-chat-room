@@ -7,7 +7,7 @@ function userJoin(id, username, roomid) {
     username,
     roomid
   }
-
+  console.log(`Adding ${JSON.stringify(user)} to users list`)
   users.push(user)
 
   return user
@@ -19,8 +19,9 @@ function getCurrentUser(id) {
 
 function userLeave(id) {
   const index = users.findIndex(user => user.id === id)
-
+  
   if (index !== -1) {
+    console.log(`Remove user ${JSON.stringify(users[index])} from users list`)
     return users.splice(index, 1)
   }
 }

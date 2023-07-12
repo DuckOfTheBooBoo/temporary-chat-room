@@ -27,10 +27,12 @@ const addUserToRoom = (roomid, user) => {
     throw new Error('Room is full')
   }
   room.users.push(user)
+  console.log(`Add user ${user.username} to ${room.id}`)
 }
 
 const removeUserFromRoom = (roomid, user) => {
   const room = rooms.find(room => room.id === roomid)
+  console.log(`Remove user ${user.username} from room ${room.id}`)
 
   if (!room) {
     throw new Error('Room not found')
@@ -43,11 +45,16 @@ const removeUserFromRoom = (roomid, user) => {
 }
 
 const deleteRoom = (roomid) => {
+  console.log(`Deleting room ${roomid}`)
   rooms = rooms.filter(room => room.id !== roomid)
 }
 
 const getRoom = (roomid) => {
   return rooms.find(room => room.id === roomid)
+}
+
+const getRooms = () => {
+  return rooms
 }
 
 const isVideoCall = (roomid) => {
@@ -66,5 +73,6 @@ module.exports = {
   removeUserFromRoom,
   deleteRoom,
   getRoom,
+  getRooms,
   isVideoCall
 }
