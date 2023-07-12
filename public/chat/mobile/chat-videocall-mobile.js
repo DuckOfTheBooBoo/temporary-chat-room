@@ -33,6 +33,24 @@ $(function() {
 
     $('.chats').append(chatContainer)
   }
+  let cameraOn = false
+  let micrphoneOn = false
+  let chatVisible = false
+
+  // Buttons
+  // Camera toggle
+  $('.camera-div').on('click', function() {
+    if (!cameraOn) {
+      $('.camera-div img').attr('src', '../../assets/icons/camera-video-fill.svg')
+      cameraOn = true
+    } else {
+      $('.camera-div img').attr('src', '../../assets/icons/camera-video-off-fill.svg')
+      cameraOn = false
+    }
+  })
+  // Microphone toggle
+  // Chats
+  // Leave
 
   // eslint-disable-next-line no-undef
   const socket = io();
@@ -43,6 +61,7 @@ $(function() {
   })
 
   $('.room-id-container span').text(roomid)
+  
 
   socket.emit('joinRoom', {
     username, roomid
@@ -79,8 +98,5 @@ $(function() {
     scrollDown()
     $('#message-field').val('')
   })
-  
-  // Buttons
-  
 
 })
