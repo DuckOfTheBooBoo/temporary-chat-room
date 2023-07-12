@@ -39,7 +39,7 @@ $(function() {
 
   // Buttons
   // Camera toggle
-  $('.camera-div').on('click', function() {
+  $('.camera-div button').on('click', function() {
     if (!cameraOn) {
       $('.camera-div img').attr('src', '../../assets/icons/camera-video-fill.svg')
       cameraOn = true
@@ -49,6 +49,15 @@ $(function() {
     }
   })
   // Microphone toggle
+  $('.mic-div button').on('click', function() {
+    if (!micrphoneOn) {
+      $('.mic-div img').attr('src', '../../assets/icons/mic-fill.svg')
+      micrphoneOn = true
+    } else {
+      $('.mic-div img').attr('src', '../../assets/icons/mic-mute-fill.svg')
+      micrphoneOn = false
+    }
+  })
   // Chats
   // Leave
 
