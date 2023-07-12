@@ -60,6 +60,12 @@ $(function() {
   })
   // Chats
   // Leave
+  $('.leave-div button').on('click', function() {
+    const choice = confirm('Are you sure you want to leave?')
+    if (choice) {
+      window.location.href = '/'
+    }
+  })
 
   // eslint-disable-next-line no-undef
   const socket = io();
