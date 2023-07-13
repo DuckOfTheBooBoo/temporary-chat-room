@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="chat-videocall.css">
+    <title>Chat</title>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="room-id-container">
+            <p>Room ID: <span></span></p>
+        </div>
+        <!-- Chats -->
+        <div class="chats"></div>
+        <form action="" id="form-message" autocomplete="off">
+            <input type="text" placeholder="Message" id="message-field" name="message">
+            <button type="submit" id="subtmit-btn">
+                <img src="../assets/icons/paper-plane-solid.svg">
+            </button>
+        </form>
+    </div>
+    <div class="video-frame">
+        <div class="video" id="video-div-foreign">
+            <video src="" autoplay></video>
+            <p>Username foreign</p>
+        </div>
+        <div class="video" id="video-div-own">
+            <video src="" autoplay mute></video>
+            <p>Username own</p>
+        </div>
+        <div class="buttons-container">
+            <div class="camera-div btn">
+                <button><img src="../assets/icons/camera-video-off-fill.svg"></button>
+            </div>
+            <div class="mic-div btn">
+                <button><img src="../assets/icons/mic-mute-fill.svg"></button> 
+            </div>
+            <div class="leave-div btn">
+                <button><img src="../assets/icons/right-from-bracket-solid.svg"></button>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.0.slim.js" integrity="sha256-7GO+jepT9gJe9LB4XFf8snVOjX3iYNb0FHYr5LI1N5c=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.11.2/qs.min.js" integrity="sha512-vCegEXqPUYpZsTGz2lk0jaQ1psxtFeniVJACAXhMVxuoYa/N4nZkjoVFOxLwP7uGeQOoemiz7DQrIpRTj4IBPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="chat-videocall.js"></script>
+</body>
+</html>
