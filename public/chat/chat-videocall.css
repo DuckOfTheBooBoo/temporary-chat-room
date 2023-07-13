@@ -1,15 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;800&display=swap');
 
+html {
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 body {
     padding: 0;
     margin: 0;
     font-family: 'Noto Sans', sans-serif;
     display: flex;
     height: 100vh;
+    background: black;
 }
 
 .chat-container {
-    box-sizing: border-box;
+    background: white;
     display: flex;
     flex-direction: column;
     width: 25%;
@@ -115,10 +124,17 @@ body {
     cursor: pointer;
 }
 
+.main-display {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    gap: 10px;
+}
+
 .video-frame {
     position: relative;
-    box-sizing: border-box;
-    padding: 15px;
     background-color: black;
     height: 100%;
     flex-grow: 1;
@@ -137,30 +153,7 @@ body {
     background: #28282B;
 }
 
-#video-div-foreign video {
-}
-
-#video-div-own {
-    box-sizing: border-box;
-    position: absolute;
-    z-index: 10;
-    bottom: 0;
-    right: 0;
-    background: #28282B;
-    border-radius: 10px;
-    overflow: hidden;
-    width: 30%;
-    height: auto;
-    border: 2px solid white;
-    margin-right: 20px;
-    margin-bottom: 20px;
-}
-
-#video-div-own video {
-}
-
 .video video {
-    box-sizing: border-box;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -175,26 +168,51 @@ body {
     margin-left: 10px;
 }
 
-.buttons-container {
+.bottom-corner {
     position: absolute;
-    /* display: flex; */
-    display: none;
-    bottom: 20px;
-    background: white;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
     gap: 10px;
-    border-radius: 20px;
-    opacity: 1;
+    align-items: center;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 10px;
+    bottom: 10px;
+    right: 10px;
+    width: 30%;
 }
 
+#video-div-own {
+    position: relative;
+    background: #28282B;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid white;
+    width: 100%;
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    width: 100%;
+    justify-content: center;
+    background: white;
+    padding: 10px;
+    gap: 15px;
+    border-radius: 20px;
+}
 
 .btn button{
     background: white;
     border: 1px solid gray;
     border-radius: 50%;
-    padding: 10px;
-    width: 70px;
-    height: 70px;
+    padding: 10px 15px;
+}
+
+.btn button:hover {
+    cursor: pointer;
 }
 
 .leave-div button {
