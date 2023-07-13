@@ -36,6 +36,7 @@ $(function() {
   let cameraOn = false
   let micrphoneOn = false
   let chatVisible = false
+  let unreadMsg = 0
 
   // Buttons
   // Camera toggle
@@ -62,6 +63,8 @@ $(function() {
   $('.chat-div button').on('click', function() {
     $('.bottom-sheet').css({bottom: '0'})
     chatVisible = true
+    $('.unread-msg').hide()
+    unreadMsg = 0
   })
   $('#close-sheet').on('click', function() {
     $('.bottom-sheet').css({bottom: '-100%'})
@@ -96,6 +99,11 @@ $(function() {
 
   socket.on('message', (message) => {
     createChatForeign(message)
+    if (!chatVisible) {
+      unreadMsg++
+      $('.unread-msg').show()
+      $('.unread-msg p').text(unreadMsg)
+    }
   })
 
   socket.on('errconn', (message) => {
