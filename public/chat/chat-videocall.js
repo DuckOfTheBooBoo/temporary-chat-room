@@ -36,14 +36,18 @@ $(function() {
 
   let cameraOn = false
   let micrphoneOn = false
+  const videoObj = document.querySelector('#video-div-own video')
+  const video = new MediaController(videoObj)
 
   // Buttons
   // Camera toggle
   $('.camera-div button').on('click', function() {
     if (!cameraOn) {
+      video.enableCamera()
       $('.camera-div img').attr('src', '../assets/icons/camera-video-fill.svg')
       cameraOn = true
     } else {
+      video.disableCamera()
       $('.camera-div img').attr('src', '../assets/icons/camera-video-off-fill.svg')
       cameraOn = false
     }
