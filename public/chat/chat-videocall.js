@@ -84,6 +84,8 @@ $(function() {
           'cursor': 'pointer'
         })
       })
+    } else {
+      $('.message-overlay').hide()
     }
   })
 
