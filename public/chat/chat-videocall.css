@@ -147,6 +147,61 @@ body {
     flex-grow: 1;
 }
 
+.message-overlay {
+    box-sizing: border-box;
+    color: white;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+}
+
+.message-overlay p {
+    font-size: larger;
+    font-weight: bold;
+}
+
+.message-overlay .buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.message-overlay .buttons button {
+    padding: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.message-overlay .buttons button:hover {
+    cursor: pointer;
+}
+
+#message-decline {
+    background-color: red;
+}
+
+#message-decline:hover {
+    background-color: rgba(255, 0, 0, 0.814);
+}
+
+#message-accept {
+    background-color: rgb(57,173,72);
+}
+
+#message-accept:hover {
+    background-color: rgba(57, 173, 72, 0.805);
+}
+
 .video {
     border: 1px solid white;
     position: relative;

@@ -70,6 +70,74 @@ $(function() {
     }
   })
 
+  // Message overlay
+  $('#message-decline').on('click', function() {
+    if (!isCall) {
+      $('.message-overlay').hide()
+      $('.call-div button').css({
+        'background-color': 'rgb(57,173,72)',
+        filter: 'none',
+        border: '1px solid rgb(57,173,72)'
+      })
+      $('.call-div button').on('mouseenter', function() {
+        $(this).css({
+          'cursor': 'pointer'
+        })
+      })
+    }
+  })
+
+  $('#message-accept').on('click', function() {
+    if (!isCall) {
+      $('.message-overlay').hide()
+      $('.call-div button').each(function() {
+        $(this).css({
+          'background-color': 'rgb(255,0,0)',
+          filter: 'none',
+          border: '1px solid rgb(255,0,0)'
+        });
+        $(this).find('img').attr('src', '../assets/icons/phone-slash-solid.svg');
+        $(this).on('mouseenter', function() {
+          $(this).css('cursor', 'pointer')
+        })
+      })
+      
+
+      isCall = true
+    } else {
+      $('.message-overlay').hide()
+      $('.call-div button').each(function() {
+        $(this).css({
+          'background-color': 'rgb(57,173,72)',
+          filter: 'none',
+          border: '1px solid rgb(57,173,72)'
+        });
+        $(this).find('img').attr('src', '../assets/icons/phone-solid.svg');
+      })
+
+
+      isCall = false
+    }
+  })
+
+  $('.call-div button').on('click', function() {
+    if (isCall) {
+      $('.message-overlay').each(function() {
+        $(this).find('p').text('End Call?')
+        $('#message-decline').text('No')
+        $('#message-accept').text('Yes')
+        $(this).show()
+      })
+    } else {
+      $('.message-overlay').each(function() {
+        $(this).find('p').text('Start Call?')
+        $('#message-decline').text('No')
+        $('#message-accept').text('Yes')
+        $(this).show()
+      })
+    }
+  })
+
   // eslint-disable-next-line no-undef
   const socket = io();
   
