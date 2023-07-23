@@ -23,18 +23,28 @@
     </div>
     <div class="main-display">
         <div class="video-frame">
+            <div class="message-overlay">
+                <p>Start Call?</p>
+                <div class="buttons">
+                    <button id="message-decline">Later</button>
+                    <button id="message-accept">Yes</button>
+                </div>
+            </div>
             <div class="video" id="video-div-foreign">
                 <video src="" autoplay></video>
                 <p>Username foreign</p>
             </div>
             <div class="bottom-corner">
                 <div class="video" id="video-div-own">
-                    <video src="" autoplay mute></video>
+                    <video src="" autoplay muted></video>
                     <p>Username own</p>
                 </div>
             </div>
         </div>
         <div class="buttons-container">
+            <div class="call-div btn">
+                <button><img src="../assets/icons/phone-solid.svg"></button>
+            </div>
             <div class="camera-div btn">
                 <button><img src="../assets/icons/camera-video-off-fill.svg"></button>
             </div>

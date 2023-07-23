@@ -34,6 +34,17 @@ $(function() {
     $('.chats').append(chatContainer)
   }
 
+  // eslint-disable-next-line no-undef
+  const {username, roomid} = Qs.parse(this.location.search, {
+    ignoreQueryPrefix: true,
+  })
+
+  // Set Username at video frame
+  $('#video-div-own p').text(username)
+
+  let localStream = null
+  let remoteStream = null
+  let isCall = false
   let cameraOn = false
   let micrphoneOn = false
   const videoObj = document.querySelector('#video-div-own video')
