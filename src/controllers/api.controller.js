@@ -55,8 +55,30 @@ const getRoomAvailability = (req, res) => {
   })
 }
 
+const getUsersinRoom = (req, res) => {
+  const {username, roomid} = req.query
+  const rooms = getRooms()
+
+  const room = rooms.find(room => {
+    return room.id === roomid && room.users.some(user => user.username === username)
+  })
+
+  if (room) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'Data retrieved successfully',
+      data: room.users
+    })
+  }
+
+  return res.status(403).json({
+    status: 'fail',
+    message: '403 Forbidden'
+  })
+}
+
 module.exports = {
   createRoom,
-  // getRoomsFromArray,
+  getUsersinRoom,
   getRoomAvailability
 }

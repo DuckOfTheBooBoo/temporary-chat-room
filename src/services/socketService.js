@@ -13,6 +13,8 @@ const socketIoServer = (httpServer) => {
       try {
         addUserToRoom(roomid, user)
         socket.join(user.roomid)
+
+        // Tell client that connection is successful
       } catch (error) {
         console.error(error)
 
@@ -22,8 +24,11 @@ const socketIoServer = (httpServer) => {
         socket.disconnect()
       }
       
-      socket.emit('notice', formatMessage('notice', 'Welcome to the chat'))
-      socket.broadcast.to(user.roomid).emit('notice', formatMessage('notice', `${user.username} has joined`))
+      socket.emit('notice', 'Welcome to the chat')
+      socket.broadcast.to(user.roomid).emit('notice', {
+        type: 'user-join',
+        message: `${user.username} has joined`,
+      })
   
       socket.on('chatMessage', (message) => {
         socket.broadcast.to(user.roomid).emit('message', formatMessage(user.username, message.message))

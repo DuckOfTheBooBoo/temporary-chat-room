@@ -42,23 +42,21 @@ $(function() {
   // Set Username at video frame
   $('#video-div-own p').text(username)
 
+  let roomUsers = []
   let localStream = null
   let remoteStream = null
   let isCall = false
   let cameraOn = false
   let micrphoneOn = false
   const videoObj = document.querySelector('#video-div-own video')
-  const video = new MediaController(videoObj)
 
   // Buttons
   // Camera toggle
   $('.camera-div button').on('click', function() {
     if (!cameraOn) {
-      video.enableCamera()
       $('.camera-div img').attr('src', '../assets/icons/camera-video-fill.svg')
       cameraOn = true
     } else {
-      video.disableCamera()
       $('.camera-div img').attr('src', '../assets/icons/camera-video-off-fill.svg')
       cameraOn = false
     }
@@ -154,10 +152,7 @@ $(function() {
   // eslint-disable-next-line no-undef
   const socket = io();
   
-  // eslint-disable-next-line no-undef
-  const {username, roomid} = Qs.parse(this.location.search, {
-    ignoreQueryPrefix: true,
-  })
+  
 
   $('.room-id-container span').text(roomid)
 
@@ -165,8 +160,31 @@ $(function() {
     username, roomid
   })
 
+
   socket.on('notice', (message) => {
-    createNotice(message.message)
+    $.ajax({
+      url: `/api/roomInfo?username=${username}&roomid=${roomid}`,
+      method: 'GET',
+      success: function(response) {
+        const users = response.data
+        roomUsers.push(...users)
+        const remoteUser = users.find(user => user.username !== username)
+
+        if (remoteUser) {
+          $('#video-div-foreign p').text(remoteUser.username)
+        }
+    
+        if (message.type === 'user-join') {
+          createNotice(`${remoteUser.username} has joined`)
+        } else {
+          createNotice(message)
+        }
+        return undefined
+      },
+      error: function(xhr, status, error) {
+        console.error(error)
+      }
+    })
   })
 
   socket.on('message', (message) => {
