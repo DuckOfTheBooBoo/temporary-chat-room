@@ -6,6 +6,7 @@ const indexRouter = require('./src/routes/index.route')
 const chatRouter = require('./src/routes/chat.route')
 const apiRouter = require('./src/routes/api.route')
 const socketIoServer = require('./src/services/socketService')
+const peerServer = require('./src/services/peerService')
 
 const app = express()
 app.use(express.static(path.join(__dirname, 'public')))
@@ -21,4 +22,5 @@ const PORT = process.env.PORT || 8080
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is listening on 127.0.0.1:${PORT}`)
+  console.log('Peer server is listening on 127.0.0.1:8081')
 })
