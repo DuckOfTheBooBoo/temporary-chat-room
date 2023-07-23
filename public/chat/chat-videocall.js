@@ -151,15 +151,19 @@ $(function() {
 
   // eslint-disable-next-line no-undef
   const socket = io();
+  // eslint-disable-next-line no-undef
+  const peer = new Peer({
+    host: '/',
+    path: '/',
+    port: 8081
+  })
+  console.log('Peer: ', peer)
   
-  
-
   $('.room-id-container span').text(roomid)
 
   socket.emit('joinRoom', {
     username, roomid
   })
-
 
   socket.on('notice', (message) => {
     $.ajax({
