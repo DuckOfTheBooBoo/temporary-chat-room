@@ -66,8 +66,9 @@ $(function() {
   })
   
   peer.on('connection', conn => {
-    conn.on('data', data => {
-      console.log(data)
+    $('.loading').hide()
+    $('.message').css({
+      display: 'flex'
     })
   })
 
@@ -77,7 +78,10 @@ $(function() {
     const conn = peer.connect(peerid)
 
     conn.on('open', () => {
-      conn.send('hi')
+      $('.loading').hide()
+      $('.message').css({
+        display: 'flex'
+      })
     })
   })
 
