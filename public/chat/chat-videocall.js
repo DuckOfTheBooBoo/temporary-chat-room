@@ -50,7 +50,38 @@ $(function() {
   let micrphoneOn = false
   const videoObj = document.querySelector('#video-div-own video')
 
-  // Buttons
+  // eslint-disable-next-line no-undef
+  const socket = io();
+  // eslint-disable-next-line no-undef
+  const peer = new Peer({
+    host: '/',
+    path: '/',
+    port: 8081
+  })
+
+  peer.on('open', id => {
+    socket.emit('joinRoom', {
+      username, roomid, id
+    })
+  })
+  
+  peer.on('connection', conn => {
+    conn.on('data', data => {
+      console.log(data)
+    })
+  })
+
+  $('.room-id-container span').text(roomid)
+
+  socket.on('peer-connect', peerid => {
+    const conn = peer.connect(peerid)
+
+    conn.on('open', () => {
+      conn.send('hi')
+    })
+  })
+
+    // Buttons
   // Camera toggle
   $('.camera-div button').on('click', function() {
     if (!cameraOn) {
@@ -147,22 +178,6 @@ $(function() {
         $(this).show()
       })
     }
-  })
-
-  // eslint-disable-next-line no-undef
-  const socket = io();
-  // eslint-disable-next-line no-undef
-  const peer = new Peer({
-    host: '/',
-    path: '/',
-    port: 8081
-  })
-  console.log('Peer: ', peer)
-  
-  $('.room-id-container span').text(roomid)
-
-  socket.emit('joinRoom', {
-    username, roomid
   })
 
   socket.on('notice', (message) => {

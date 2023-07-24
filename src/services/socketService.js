@@ -7,13 +7,16 @@ const socketIoServer = (httpServer) => {
   const io = new socketIo.Server(httpServer)
 
   io.on('connection', (socket) => {
-    socket.on('joinRoom', ({username, roomid}) => {
+    socket.on('joinRoom', ({username, roomid, id: peerid}) => {
       const user = userJoin(socket.id, username, roomid)
 
       try {
         addUserToRoom(roomid, user)
         socket.join(user.roomid)
 
+        if (peerid) {
+          socket.broadcast.to(user.roomid).emit('peer-connect', peerid)
+        }
         // Tell client that connection is successful
       } catch (error) {
         console.error(error)
