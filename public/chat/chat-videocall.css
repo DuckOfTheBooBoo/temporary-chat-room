@@ -148,7 +148,7 @@ body {
 }
 
 .message {
-    display: none;
+    display: flex;
     box-sizing: border-box;
     color: white;
     position: absolute;
@@ -186,19 +186,19 @@ body {
     cursor: pointer;
 }
 
-#message-decline {
+.btn-decline {
     background-color: red;
 }
 
-#message-decline:hover {
+.btn-decline:hover {
     background-color: rgba(255, 0, 0, 0.814);
 }
 
-#message-accept {
+.btn-accept {
     background-color: rgb(57,173,72);
 }
 
-#message-accept:hover {
+.btn-accept:hover {
     background-color: rgba(57, 173, 72, 0.805);
 }
 
