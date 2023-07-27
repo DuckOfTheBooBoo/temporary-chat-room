@@ -236,8 +236,8 @@ $(function() {
       }
     })
   })
-
-  $('.room-id-container span').text(roomid)
+  
+  $('.room-id-container a').attr('href', `/?roomid=${roomid}`).text(roomid)
 
   socket.on('peer-connect', peerid => {
     window.peerid = peerid
