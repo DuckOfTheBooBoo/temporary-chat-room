@@ -8,6 +8,9 @@
     <title>Expressjs</title>
 </head>
 <body>
+    <!-- TODO: 
+        - Implement query
+        - Hide Create Room when Room ID input field is not empty -->
     <div class="container">
         <div class="message">
             <p>Temporary Chat Room</p>
@@ -25,7 +28,7 @@
                     minlength="3"
                     maxlength="10"
                     required>
-                <p class="text-separator"><span>CREATE A ROOM</span></p>
+                <p class="text-separator" id="create-room-separator"><span>CREATE A ROOM</span></p>
                 <div class="max-user-container">
                     <p>Max users: </p>
                     <input
@@ -48,7 +51,7 @@
             </form>
             <!-- Join Room Form -->
             <form action="" id="join-room-form" autocomplete="off">
-                <p class="text-separator"><span>OR JOIN A ROOM</span></p>
+                <p class="text-separator" id="join-room-separator"><span>OR JOIN A ROOM</span></p>
                 <input 
                     type="text" 
                     name="username" 
@@ -72,6 +75,7 @@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.11.2/qs.min.js" integrity="sha512-vCegEXqPUYpZsTGz2lk0jaQ1psxtFeniVJACAXhMVxuoYa/N4nZkjoVFOxLwP7uGeQOoemiz7DQrIpRTj4IBPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="index/index.js"></script>
 </body>
 </html>

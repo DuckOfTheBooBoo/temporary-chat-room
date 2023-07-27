@@ -1,4 +1,8 @@
 $(function() {
+  // Add query support for direct input
+  // Hide create room when roomid value is not empty
+  // If user emit enter on username field but roomid value is not empty, emit join room submission instead
+
   function objectToQuery(object, ignoreKeys = []) {
     let query = '?'
 
@@ -33,6 +37,47 @@ $(function() {
     return randomString;
   }  
 
+  function hideCreateRoom() {
+    const childs = $('#create-room-form').children()
+
+    for (const key in Object.keys(childs)) {
+      if (key == 0 || key == 1  || key == 5) {
+        continue
+      }
+      $(childs[key]).slideUp()
+    }
+  }
+
+  function showCreateRoom() {
+    const childs = $('#create-room-form').children()
+
+    for (const key in Object.keys(childs)) {
+      if (key == 0 || key == 1 || key == 5  ) {
+        continue
+      }
+      $(childs[key]).slideDown()
+    }
+  }
+
+  // eslint-disable-next-line no-undef
+  const {roomid} = Qs.parse(this.location.search, {
+    ignoreQueryPrefix: true,
+  })
+
+  if (roomid) {
+    $('#roomid-field-join').val(roomid)
+    hideCreateRoom()
+    $('#create-room-form')[0].reportValidity()
+  }
+
+  $('#roomid-field-join').on('input', function() {
+    if ($(this).val()) {
+      hideCreateRoom()
+    } else {
+      showCreateRoom()
+    }
+  })
+
   $('#video-call-checkbox').on('change', function() {
     if (this.checked) {
       $('#max-user').val(2)
@@ -52,34 +97,39 @@ $(function() {
   $('#create-room-form').on('submit', function(event) {
     event.preventDefault()
 
-    const formData = new FormData(event.target)
-    const data = {}
-
-    for (const [key, val] of formData.entries()) {
-      data[key] = val
-      if (key === 'videoCall') {
-        data['videoCall'] = true
+    if ($('#roomid-field-join').val()) {
+      $('#join-room-form').trigger('submit')
+    } else {
+      const formData = new FormData(event.target)
+      const data = {}
+  
+      for (const [key, val] of formData.entries()) {
+        data[key] = val
+        if (key === 'videoCall') {
+          data['videoCall'] = true
+        }
       }
+  
+      if (!data.roomid) {
+        data.roomid = generateRandomString()
+      }
+  
+      $.ajax({
+        url: '/api/room',
+        type: 'POST',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(response) {
+          const query = objectToQuery(data, ['maxUsers', 'videoCall'])
+          window.location.href = '/chat' + query
+        },
+        error: function(xhr, status, error) {
+          console.log(error)
+          alert(xhr.responseJSON.message)
+        }
+      })
     }
 
-    if (!data.roomid) {
-      data.roomid = generateRandomString()
-    }
-
-    $.ajax({
-      url: '/api/room',
-      type: 'POST',
-      data: JSON.stringify(data),
-      contentType: 'application/json',
-      success: function(response) {
-        const query = objectToQuery(data, ['maxUsers', 'videoCall'])
-        window.location.href = '/chat' + query
-      },
-      error: function(xhr, status, error) {
-        console.log(error)
-        alert(xhr.responseJSON.message)
-      }
-    })
   })
 
   $('#join-room-form').on('submit', function(event) {
