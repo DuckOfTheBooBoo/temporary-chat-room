@@ -1,4 +1,32 @@
 $(function() {
+
+  // class CallEvent {
+  //   constructor() {
+  //     this.events = {}
+  //   }
+
+  //   on(eventName, callback) {
+  //     if (!this.events[eventName]) {
+  //       this.events[eventName] = []
+  //     }
+  //     this.events[eventName].push(callback)
+  //   }
+
+  //   emit(eventName, ...args) {
+  //     const eventCallbacks = this.events[eventName]
+  //     if (eventCallbacks) {
+  //       eventCallbacks.forEach(callback => callback(...args))
+  //     }
+  //   }
+
+  //   off(eventName, callback) {
+  //     const eventCallbacks = this.events[eventName]
+  //     if (eventCallbacks) {
+  //       this.events[eventName] = eventCallbacks.filter(cb => cb !== callback)
+  //     }
+  //   }
+  // }
+
   function scrollDown() {
     const chatMessages = document.querySelector('.chats')
     chatMessages.scrollTop = chatMessages.scrollHeight
@@ -34,7 +62,7 @@ $(function() {
     $('.chats').append(chatContainer)
   }
   
-  function overlayConfim(msg) {
+  function overlayConfim(msg, acceptMsg = 'Yes', declineMsg = 'No') {
     function genId() {
       const chars = 'abcdefghijklmnopqrstuvwxyz'
       let randomString = ''
@@ -47,6 +75,10 @@ $(function() {
       return randomString
     }
 
+    if ($('.message').length > 0) {
+      $('.message').remove()
+    }
+
     const parentDiv = $('<div>').addClass('message')
     const buttonDiv = $('<div>').addClass('buttons')
 
@@ -55,8 +87,8 @@ $(function() {
     const declineId = genId()
     const acceptId = genId()
 
-    const declineBtn = $('<button>').text('No').attr('id', `decline-${declineId}`).addClass('btn-decline')
-    const acceptBtn = $('<button>').text('Yes').attr('id', `accept-${acceptId}`).addClass('btn-accept')
+    const declineBtn = $('<button>').text(declineMsg).attr('id', `decline-${declineId}`).addClass('btn-decline')
+    const acceptBtn = $('<button>').text(acceptMsg).attr('id', `accept-${acceptId}`).addClass('btn-accept')
 
     buttonDiv.append([declineBtn, acceptBtn])
 
@@ -90,9 +122,16 @@ $(function() {
     $('.video-frame').prepend(loadingDiv)
 
     return loadingDiv
-  } 
+  }
+  
+  function purgeMedia() {
+    localVideo.srcObject = null
+    window.localStream = null
+    remoteVideo.srcObject = null
+    window.remoteStream = null
+  }
 
-  function startCall() {
+  function startCall(peerConn = window.peerConn) {
     $('.call-div button').each(function() {
       $(this).css({
         'background-color': 'rgb(255,0,0)',
@@ -102,33 +141,40 @@ $(function() {
       $(this).find('img').attr('src', '../assets/icons/phone-slash-solid.svg');
       $(this).on('mouseenter', function() {
         $(this).css('cursor', 'pointer')
-      })
+      })  
     })
 
     navigator.mediaDevices.getUserMedia({
       audio: true,
       video: true
     }).then(stream => {
+      window.localStream = stream
       const localVideo = document.querySelector('#video-div-own video')
       localVideo.srcObject = stream
 
       console.log('Calling ', window.peerid)
-      window.peerConn.send({
+      peerConn.send({
         requestType: 'call'
       })
 
       const loadingWaitCall = loadingOverlay('Waiting for answer')
 
-      window.peerConn.on('data', data => {
+      peerConn.on('data', data => {
         if (data.responseType === 'call' && data.action === 'accept') {
           loadingWaitCall.remove()
           console.log('Call answered')
 
-          const call = peer.call(window.peerid, stream)
+          window.call = peer.call(window.peerid, stream)
 
-          call.on('stream', function(remoteStream) {
+          window.call.on('stream', function(remoteStream) {
             const remoteVideo = document.querySelector('#video-div-foreign video')
             remoteVideo.srcObject = remoteStream
+            window.isCall = true
+          })
+
+          window.call.on('close', () => {
+            purgeMedia()
+            alert('Call ended')
           })
 
         } else if (data.responseType === 'call' && data.action === 'decline') {
@@ -143,6 +189,74 @@ $(function() {
     })
   }
 
+  function callAnswer(peerConn) {
+    peerConn.on('data', data => {
+      console.log(data)
+      if (data.requestType === 'call') {
+        $('.message').remove()
+        const {overlay: AnswerCallOverlay, accept, decline} = overlayConfim('Answer Call?')
+        
+        accept.on('click', function() {
+          AnswerCallOverlay.remove()
+          window.peerConn.send({
+            responseType: 'call',
+            action: 'accept'
+          })
+
+          $('.call-div button').each(function() {
+            $(this).css({
+              'background-color': 'rgb(255,0,0)',
+              filter: 'none',
+              border: '1px solid rgb(255,0,0)'
+            });
+            $(this).find('img').attr('src', '../assets/icons/phone-slash-solid.svg');
+            $(this).on('mouseenter', function() {
+              $(this).css('cursor', 'pointer')
+            })  
+          })
+
+          peer.on('call', function(call) {
+            navigator.mediaDevices.getUserMedia({audio: true, video: true})
+                .then(stream => {
+                  localVideo.srcObject = stream
+                  window.localStream = stream
+
+                  call.answer(stream)
+                  call.on('stream', function(remoteStream) {
+                    window.remoteStream = remoteStream
+                    remoteVideo.srcObject = remoteStream
+                  })
+                })
+                .catch(err => {
+                  alert('Error occurred, check log.')
+                  console.error(err)
+                })
+          })
+        })
+    
+        decline.on('click', function () { 
+          AnswerCallOverlay.remove()
+          window.peerConn.send({
+            responseType: 'call',
+            action: 'decline'
+          })
+        })  
+      }
+    })
+  }
+
+  // function endCall() {
+  //   window.call.close()
+  //   window.call.on('close', () => {
+  //     localVideo.srcObject = null
+  //     window.localStream = null
+  //     remoteVideo.srcObject = null
+  //     window.remoteStream = null
+  //   })
+
+  //   alert('Peer ended the call')
+  // }
+
   // eslint-disable-next-line no-undef
   const {username, roomid} = Qs.parse(this.location.search, {
     ignoreQueryPrefix: true,
@@ -152,11 +266,8 @@ $(function() {
   $('#video-div-own p').text(username)
 
   let roomUsers = []
-  let localStream
-  let remoteStream
-  let isCall = false
-  let callResponse
-  let callRequest
+  const localVideo = document.querySelector('#video-div-own video')
+  const remoteVideo = document.querySelector('#video-div-foreign video')
   let cameraOn = false
   let micrphoneOn = false
 
@@ -177,7 +288,7 @@ $(function() {
       username, roomid, id
     })
   })
-  
+
   peer.on('connection', conn => {
     window.peerid = conn.peer
     window.peerConn = conn
@@ -188,55 +299,18 @@ $(function() {
 
     accept.on('click', function() {
       startCallOverlay.remove()
-      startCall(peer)
+      startCall()
     })
 
     decline.on('click', function () { 
       startCallOverlay.remove()
     })
 
-    window.peerConn.on('data', data => {
-      if (data.requestType === 'call') {
-        startCallOverlay.remove()
-        const {overlay: AnswerCallOverlay, accept, decline} = overlayConfim('Answer Call?')
-        
-        accept.on('click', function() {
-          AnswerCallOverlay.remove()
-          window.peerConn.send({
-            responseType: 'call',
-            action: 'accept'
-          })
-
-          peer.on('call', function(call) {
-            navigator.mediaDevices.getUserMedia({audio: true, video: true})
-                .then(stream => {
-                  const localVideo = document.querySelector('#video-div-own video')
-                  localVideo.srcObject = stream
-
-                  call.answer(stream)
-                  call.on('stream', function(remoteStream) {
-                    const remoteVideo = document.querySelector('#video-div-foreign video')
-                    remoteVideo.srcObject = remoteStream
-                  })
-                })
-                .catch(err => {
-                  alert('Error occurred, check log.')
-                  console.error(err)
-                })
-          })
-        })
-    
-        decline.on('click', function () { 
-          AnswerCallOverlay.remove()
-          window.peerConn.send({
-            responseType: 'call',
-            action: 'decline'
-          })
-        })  
-      }
-    })
+    // Call answer
+    // TODO: make the other peer can start call too
+    callAnswer(conn)
   })
-  
+
   $('.room-id-container a').attr('href', `/?roomid=${roomid}`).text(roomid)
 
   socket.on('peer-connect', peerid => {
@@ -252,15 +326,18 @@ $(function() {
     
     accept.on('click', function() {
       overlay.remove()
-      startCall(peer)
+      startCall()
     })
 
     decline.on('click', function() {
       overlay.remove()
     })
+
+    callAnswer(window.peerConn)
+
   })
 
-    // Buttons
+  // Buttons
   // Camera toggle
   $('.camera-div button').on('click', function() {
     if (!cameraOn) {
@@ -289,51 +366,32 @@ $(function() {
     }
   })
 
-  // Message overlay
-  $('#message-decline').on('click', function() {
-    // Call later
-    if (!isCall & !callRequest) {
-      $('.message-overlay').hide()
-      $('.call-div button').css({
-        'background-color': 'rgb(57,173,72)',
-        filter: 'none',
-        border: '1px solid rgb(57,173,72)'
-      })
-      $('.call-div button').on('mouseenter', function() {
-        $(this).css({
-          'cursor': 'pointer'
-        })
-      })
-
-      // Decline call
-    } else if (callRequest && !isCall) {
-      console.log('Declining call')
-      window.peerConn.send({
-        responseType: 'call',
-        action: 'decline'
-      })
-      $('.message-overlay').hide()
-      callRequest = false
-    }
-    else {
-      $('.message-overlay').hide()
-    }
-  })
-
   $('.call-div button').on('click', function() {
-    if (isCall) {
-      $('.message-overlay').each(function() {
-        $(this).find('p').text('End Call?')
-        $('#message-decline').text('No').css({display: 'flex'})
-        $('#message-accept').text('Yes').css({display: 'flex'})
-        $(this).show()
+    if (window.isCall) {
+      const {overlay, accept, decline} = overlayConfim('End Call?')
+
+      accept.on('click', function() {
+        // TODO: Implement end call
+        overlay.remove()
+        window.call.close()
+        console.log('Peer closed')
+        window.isCall = false
       })
+
+      decline.on('click', function() {
+        overlay.remove()
+      })
+
     } else {
-      $('.message-overlay').each(function() {
-        $(this).find('p').text('Start Call?')
-        $('#message-decline').text('No').css({display: 'flex'})
-        $('#message-accept').text('Yes').css({display: 'flex'})
-        $(this).show()
+      const {overlay, accept, decline} = overlayConfim('Start Call?')
+
+      accept.on('click', function() {
+        overlay.remove()
+        startCall()
+      })
+
+      decline.on('click', function() {
+        overlay.remove()
       })
     }
   })
