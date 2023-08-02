@@ -6,7 +6,6 @@ const indexRouter = require('./src/routes/index.route')
 const chatRouter = require('./src/routes/chat.route')
 const apiRouter = require('./src/routes/api.route')
 const socketIoServer = require('./src/services/socketService')
-const peerServer = require('./src/services/peerService')
 
 const app = express()
 app.use(express.static(path.join(__dirname, 'public')))

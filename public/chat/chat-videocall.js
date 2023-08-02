@@ -131,7 +131,8 @@ $(function() {
     window.remoteStream = null
   }
 
-  function startCall(peerConn = window.peerConn) {
+  function startCall() {
+    window.startCallCalled += 1
     $('.call-div button').each(function() {
       $(this).css({
         'background-color': 'rgb(255,0,0)',
@@ -152,36 +153,35 @@ $(function() {
       const localVideo = document.querySelector('#video-div-own video')
       localVideo.srcObject = stream
 
-      console.log('Calling ', window.peerid)
-      peerConn.send({
-        requestType: 'call'
-      })
+      console.log('Calling peer')
+
+      socket.emit('call-request')
 
       const loadingWaitCall = loadingOverlay('Waiting for answer')
 
-      peerConn.on('data', data => {
-        if (data.responseType === 'call' && data.action === 'accept') {
-          loadingWaitCall.remove()
-          console.log('Call answered')
+      let i = 0
+      socket.on('call-accept', () => {
+        i += 1
+        console.log('Call request:', i)
+        console.log('Declaring event listener for call answered')
+        loadingWaitCall.remove()
+        console.log('Call answered')
+  
+        peer.addStream(window.localStream)
+        
+        socket.on('call-end-remote', () => {
+          console.log('Declaring event listener for end call event')
+          peer.removeStream(window.localStream)
+          console.log('Call closed')
+          window.isCall = false
+          purgeMedia()
+        })
+      })
 
-          window.call = peer.call(window.peerid, stream)
-
-          window.call.on('stream', function(remoteStream) {
-            const remoteVideo = document.querySelector('#video-div-foreign video')
-            remoteVideo.srcObject = remoteStream
-            window.isCall = true
-          })
-
-          window.call.on('close', () => {
-            purgeMedia()
-            alert('Call ended')
-          })
-
-        } else if (data.responseType === 'call' && data.action === 'decline') {
-          loadingWaitCall.remove()
-          console.log('Call declined')
-          alert('Call declined')
-        }
+      socket.on('call-decline', () => {
+        loadingWaitCall.remove()
+        console.log('Call declined')
+        alert('Call declined')
       })
     }).catch(err => {
       alert('Error occurred, check log.')
@@ -189,78 +189,85 @@ $(function() {
     })
   }
 
-  function callAnswer(peerConn) {
-    peerConn.on('data', data => {
-      console.log(data)
-      if (data.requestType === 'call') {
-        $('.message').remove()
-        const {overlay: AnswerCallOverlay, accept, decline} = overlayConfim('Answer Call?')
-        
-        accept.on('click', function() {
-          AnswerCallOverlay.remove()
-          window.peerConn.send({
-            responseType: 'call',
-            action: 'accept'
-          })
+  function callAnswer() {
+    // $('.message').remove()
+    window.callAnswerCalled =+ 1
+    socket.emit('call-accept')
 
-          $('.call-div button').each(function() {
-            $(this).css({
-              'background-color': 'rgb(255,0,0)',
-              filter: 'none',
-              border: '1px solid rgb(255,0,0)'
-            });
-            $(this).find('img').attr('src', '../assets/icons/phone-slash-solid.svg');
-            $(this).on('mouseenter', function() {
-              $(this).css('cursor', 'pointer')
-            })  
-          })
-
-          peer.on('call', function(call) {
-            navigator.mediaDevices.getUserMedia({audio: true, video: true})
-                .then(stream => {
-                  localVideo.srcObject = stream
-                  window.localStream = stream
-
-                  call.answer(stream)
-                  call.on('stream', function(remoteStream) {
-                    window.remoteStream = remoteStream
-                    remoteVideo.srcObject = remoteStream
-                  })
-                })
-                .catch(err => {
-                  alert('Error occurred, check log.')
-                  console.error(err)
-                })
-          })
-        })
-    
-        decline.on('click', function () { 
-          AnswerCallOverlay.remove()
-          window.peerConn.send({
-            responseType: 'call',
-            action: 'decline'
-          })
-        })  
-      }
+    $('.call-div button').each(function() {
+      $(this).css({
+        'background-color': 'rgb(255,0,0)',
+        filter: 'none',
+        border: '1px solid rgb(255,0,0)'
+      });
+      $(this).find('img').attr('src', '../assets/icons/phone-slash-solid.svg');
+      $(this).on('mouseenter', function() {
+        $(this).css('cursor', 'pointer')
+      })  
     })
+    
+    navigator.mediaDevices.getUserMedia({audio: true, video: true})
+      .then((stream) => {
+        window.localStream = stream
+        const localVideo = document.querySelector('#video-div-own video')
+        localVideo.srcObject = window.localStream
+        peer.addStream(window.localStream)
+        window.isCall = true
+
+        socket.on('call-end-remote', () => {
+            console.log('Declaring event listener for end call event')
+            peer.removeStream(window.localStream)
+            console.log('Peer closed')
+            window.isCall = false
+            purgeMedia()
+            // eventUnsubscribe()
+          })
+      })
+      .catch((err) => {
+        alert('Error occurred, check log')
+        console.error(err)
+      })
   }
 
-  // function endCall() {
-  //   window.call.close()
-  //   window.call.on('close', () => {
-  //     localVideo.srcObject = null
-  //     window.localStream = null
-  //     remoteVideo.srcObject = null
-  //     window.remoteStream = null
-  //   })
+  function endCall() {
+    peer.removeStream(window.localStream)
+    console.log('Peer closed')
+    window.isCall = false
+    purgeMedia()
+    socket.emit('call-end')
+    eventUnsubscribe()
+  }
+  
+  function eventUnsubscribe() {
+    // Unsubscribe to event listeners
+    console.log('Unsubscribing event listeners')
+    socket.off('call-answer')
+    socket.off('call-decline')
+    socket.off('call-end-remote')
+  }
 
-  //   alert('Peer ended the call')
-  // }
+  // DEBUG
+  window.manualExchange = () => {
+    const choice = confirm('Yes for offer, No for answer')
+
+    if (choice) {
+      const offer = prompt('Offer')
+      if (offer) {
+        peer.signal(offer)
+      }
+    } else {
+      const answer = prompt('Answer')
+      if (answer) {
+        peer.signal(answer)
+      }
+    }
+  }
 
   // eslint-disable-next-line no-undef
-  const {username, roomid} = Qs.parse(this.location.search, {
+  const {username, roomid, initiator: initiatorVal} = Qs.parse(this.location.search, {
     ignoreQueryPrefix: true,
   })
+  const initiator = initiatorVal === 'true'
 
   // Set Username at video frame
   $('#video-div-own p').text(username)
@@ -270,71 +277,128 @@ $(function() {
   const remoteVideo = document.querySelector('#video-div-foreign video')
   let cameraOn = false
   let micrphoneOn = false
-
+  let isJoinedRoom = false
+  let peerConnected = false
+  let peerSignalTemp = undefined
+  window.callAnswerCalled = 0
+  window.startCallCalled = 0
+  
   // eslint-disable-next-line no-undef
   const socket = io();
   // eslint-disable-next-line no-undef
-  const peer = new Peer(undefined, {
-    host: '/',
-    path: '/',
-    port: 8081
+  const peer = new SimplePeer({
+    initiator,
+    trickle: false,
+    config: {
+      iceServers: [
+        {urls: 'stun:stun.l.google.com:19302'},
+        {urls: 'stun:stun2.l.google.com:19305'},
+      ] 
+    }
   })
-
   const loading = loadingOverlay('Waiting for another peer')
+  
+  /**
+   * Initiator creates an offer
+   * Send the offer to the non-initiaor a.k.a responder peer
+   * Responder recieved the offer, creates the answer
+   * Send the answer to initiator
+   * Initiator recieved the answer
+   * Both peer are now connected
+   */
 
-  peer.on('open', id => {
-    console.log(id)
-    socket.emit('joinRoom', {
-      username, roomid, id
-    })
+  socket.emit('joinRoom', {
+    username, roomid
   })
 
-  peer.on('connection', conn => {
-    window.peerid = conn.peer
-    window.peerConn = conn
+  peer.on('signal', (peerData) => {
+    console.log(peerData)
 
+    // Store peer signal temporary, since this will occur before the socket successfully joined the room
+    console.log({peerSignalTemp, peerConnected})
+    if (!peerSignalTemp && !peerConnected) {
+      peerSignalTemp = peerData
+    } else {
+      socket.emit('peer-signal', peerData)
+    }
+  })  
+
+  socket.on('peer-signal', (peerData) => {
+    // For listening to offer and answer
+    // place the latest signal inside peerSignalTemp so next time peer.on('signal') triggered, it directly emit the 'peer-signal' socket event with peerData as its payload
+    peerSignalTemp = peerData
+    peer.signal(peerData)
+  })
+  socket.on('peer-connect', () => {
+    peerConnected = true
+    if (peerSignalTemp) {
+      console.log(peerSignalTemp)
+      socket.emit('peer-signal', peerSignalTemp)
+    }
+  })
+
+  socket.on('room-join', () => {
+    console.log('Joined room')
+    isJoinedRoom = true
+  })
+
+  peer.on('stream', (remoteStream) => {
+    console.log('Declaring event listener for incoming remote stream')
+    window.remoteStream = remoteStream
+    remoteVideo.srcObject = window.remoteStream
+    window.isCall = true
+  })
+  
+  peer.on('connect', () => {
+    console.log('Connected')
     loading.remove()
-
+  
     const {overlay: startCallOverlay, accept, decline} = overlayConfim('Start Call?')
-
+  
     accept.on('click', function() {
       startCallOverlay.remove()
       startCall()
     })
-
+  
     decline.on('click', function () { 
       startCallOverlay.remove()
     })
-
-    // Call answer
-    // TODO: make the other peer can start call too
-    callAnswer(conn)
+  
+    socket.on('call-request', () => {
+      startCallOverlay.remove()
+  
+      const {overlay, accept, decline} = overlayConfim('Answer Call?')
+  
+      accept.on('click', function() {
+        overlay.remove()
+        socket.emit('call-accept')
+        callAnswer()
+      })
+  
+      decline.on('click', function() {
+        overlay.remove()
+        socket.emit('call-decline')
+      })
+    })
   })
 
+
   $('.room-id-container a').attr('href', `/?roomid=${roomid}`).text(roomid)
-
-  socket.on('peer-connect', peerid => {
-    window.peerid = peerid
-    window.peerConn = peer.connect(window.peerid)
-
-    window.peerConn.on('open', () => {
-      console.log('Connected to ', peerid)
-      loading.remove()
-    }) 
     
-    const {overlay, accept, decline} = overlayConfim('Start Call?') 
-    
+  socket.on('call-request', () => {
+    $('.message').remove()
+
+    const {overlay, accept, decline} = overlayConfim('Answer Call?')
+
     accept.on('click', function() {
       overlay.remove()
-      startCall()
+      socket.emit('call-accept')
     })
 
     decline.on('click', function() {
       overlay.remove()
+      socket.emit('call-decline')
     })
-
-    callAnswer(window.peerConn)
-
   })
 
   // Buttons
@@ -373,9 +437,7 @@ $(function() {
       accept.on('click', function() {
         // TODO: Implement end call
         overlay.remove()
-        window.call.close()
-        console.log('Peer closed')
-        window.isCall = false
+        endCall()
       })
 
       decline.on('click', function() {

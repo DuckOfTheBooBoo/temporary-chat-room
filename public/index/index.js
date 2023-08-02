@@ -113,6 +113,9 @@ $(function() {
       if (!data.roomid) {
         data.roomid = generateRandomString()
       }
+
+      // Add initiator to query
+      data['initiator'] = true
   
       $.ajax({
         url: '/api/room',
@@ -141,6 +144,9 @@ $(function() {
     for (const [key, val] of formData.entries()) {
       data[key] = val
     }
+
+    // Add initiator to query
+    data['initiator'] = false
 
     $.ajax({
       url: `/api/room?username=${data.username}&roomid=${data.roomid}`,
