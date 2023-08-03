@@ -258,6 +258,13 @@ $(function() {
     peer.send(JSON.stringify(data))
   }
 
+  function playNotification() {
+    if (!notificationPlayer) {
+      notificationPlayer = new Audio('../assets/sounds/notification.mp3')
+    }
+    notificationPlayer.play()
+  }
+
   // DEBUG
   window.manualExchange = () => {
     const choice = confirm('Yes for offer, No for answer')
@@ -295,6 +302,7 @@ $(function() {
   let remoteVideoTrack = undefined
   let remoteAudioTrack = undefined
   let remoteCameraOn = true
+  let notificationPlayer = undefined
   const localOverlay = $('.poster-overlay-own img')
   const remoteOverlay = $('.poster-overlay-foreign img')
   window.callAnswerCalled = 0
@@ -631,6 +639,11 @@ $(function() {
 
   socket.on('message', (message) => {
     createChatForeign(message)
+
+    if (document.hidden) {
+      playNotification()
+    }
+
   })
 
   socket.on('errconn', (message) => {
