@@ -157,11 +157,23 @@ $(function() {
 
       socket.emit('call-request')
 
+      // Play ringing audio
+      let ringingAudio = document.createElement('audio')
+      ringingAudio.style.display = 'none'
+      ringingAudio.src = '../assets/sounds/ringing-call.mp3'
+      ringingAudio.autoplay = true
+      ringingAudio.loop = true
+      document.body.appendChild(ringingAudio)
+
       const loadingWaitCall = loadingOverlay('Waiting for answer')
 
       let i = 0
       socket.on('call-accept', () => {
         i += 1
+
+        document.body.removeChild(ringingAudio)
+        ringingAudio = null
+
         console.log('Call request:', i)
         console.log('Declaring event listener for call answered')
         loadingWaitCall.remove()
@@ -394,14 +406,27 @@ $(function() {
       startCallOverlay.remove()
   
       const {overlay, accept, decline} = overlayConfim('Answer Call?')
-  
+      
+      // Play incoming call audio
+      let incomingCallAudio = document.createElement('audio')
+      incomingCallAudio.style.display = 'none'
+      incomingCallAudio.src = '../assets/sounds/incoming-call.mp3'
+      incomingCallAudio.autoplay = true
+      incomingCallAudio.loop = true
+      incomingCallAudio.play()
+      document.body.appendChild(incomingCallAudio)
+
       accept.on('click', function() {
+        document.body.removeChild(incomingCallAudio)
+        incomingCallAudio = null
         overlay.remove()
         socket.emit('call-accept')
         callAnswer()
       })
   
       decline.on('click', function() {
+        document.body.removeChild(incomingCallAudio)
+        incomingCallAudio = null 
         overlay.remove()
         socket.emit('call-decline')
       })
