@@ -250,6 +250,10 @@ body {
     width: 30%;
 }
 
+.poster-overlay-own, .poster-overlay-foreign {
+    position: absolute;
+}
+
 #video-div-own {
     position: relative;
     background: #28282B;

@@ -23,15 +23,22 @@
     </div>
     <div class="main-display">
         <div class="video-frame">
+            <!-- Add poster attribute to video for a placeholder -->
             <div class="message-overlay"></div>
             <div class="video" id="video-div-foreign">
                 <video src="" autoplay></video>
                 <p>Username foreign</p>
+                <div class="poster-overlay-foreign">
+                    <img src="../assets/poster/no-connection.png" alt="">
+                </div>
             </div>
             <div class="bottom-corner">
                 <div class="video" id="video-div-own">
                     <video src="" autoplay muted></video>
                     <p>Username own</p>
+                    <div class="poster-overlay-own">
+                        <img src="../assets/poster/camera-mic-off.png" alt="">
+                    </div>
                 </div>
             </div>
         </div>
@@ -40,10 +47,10 @@
                 <button><img src="../assets/icons/phone-solid.svg"></button>
             </div>
             <div class="camera-div btn">
-                <button><img src="../assets/icons/camera-video-off-fill.svg"></button>
+                <button><img src="../assets/icons/camera-video-fill.svg"></button>
             </div>
             <div class="mic-div btn">
-                <button><img src="../assets/icons/mic-mute-fill.svg"></button> 
+                <button><img src="../assets/icons/mic-fill.svg"></button> 
             </div>
             <div class="leave-div btn">
                 <button><img src="../assets/icons/right-from-bracket-solid.svg"></button>

@@ -152,7 +152,7 @@ $(function() {
       window.localStream = stream
       const localVideo = document.querySelector('#video-div-own video')
       localVideo.srcObject = stream
-
+      localOverlay.hide()
       console.log('Calling peer')
 
       socket.emit('call-request')
@@ -209,6 +209,7 @@ $(function() {
     navigator.mediaDevices.getUserMedia({audio: true, video: true})
       .then((stream) => {
         window.localStream = stream
+        localOverlay.hide()
         const localVideo = document.querySelector('#video-div-own video')
         localVideo.srcObject = window.localStream
         peer.addStream(window.localStream)
@@ -234,6 +235,8 @@ $(function() {
     console.log('Peer closed')
     window.isCall = false
     purgeMedia()
+    localOverlay.show()
+    remoteOverlay.show()
     socket.emit('call-end')
     eventUnsubscribe()
   }
@@ -244,6 +247,15 @@ $(function() {
     socket.off('call-answer')
     socket.off('call-decline')
     socket.off('call-end-remote')
+  }
+
+  function peerDataParse(data) {
+    const value  = new TextDecoder().decode(data)
+    return JSON.parse(value)
+  }
+
+  function peerDataSend(data) {
+    peer.send(JSON.stringify(data))
   }
 
   // DEBUG
@@ -275,11 +287,16 @@ $(function() {
   let roomUsers = []
   const localVideo = document.querySelector('#video-div-own video')
   const remoteVideo = document.querySelector('#video-div-foreign video')
-  let cameraOn = false
-  let micrphoneOn = false
+  let cameraOn = true
+  let micrphoneOn = true
   let isJoinedRoom = false
   let peerConnected = false
   let peerSignalTemp = undefined
+  let remoteVideoTrack = undefined
+  let remoteAudioTrack = undefined
+  let remoteCameraOn = true
+  const localOverlay = $('.poster-overlay-own img')
+  const remoteOverlay = $('.poster-overlay-foreign img')
   window.callAnswerCalled = 0
   window.startCallCalled = 0
   
@@ -312,10 +329,10 @@ $(function() {
   })
 
   peer.on('signal', (peerData) => {
-    console.log(peerData)
+    // console.log(peerData)
 
     // Store peer signal temporary, since this will occur before the socket successfully joined the room
-    console.log({peerSignalTemp, peerConnected})
+    // console.log({peerSignalTemp, peerConnected})
     if (!peerSignalTemp && !peerConnected) {
       peerSignalTemp = peerData
     } else {
@@ -332,7 +349,7 @@ $(function() {
   socket.on('peer-connect', () => {
     peerConnected = true
     if (peerSignalTemp) {
-      console.log(peerSignalTemp)
+      // console.log(peerSignalTemp)
       socket.emit('peer-signal', peerSignalTemp)
     }
   })
@@ -344,6 +361,7 @@ $(function() {
 
   peer.on('stream', (remoteStream) => {
     console.log('Declaring event listener for incoming remote stream')
+    remoteOverlay.hide()
     window.remoteStream = remoteStream
     remoteVideo.srcObject = window.remoteStream
     window.isCall = true
@@ -380,8 +398,84 @@ $(function() {
         socket.emit('call-decline')
       })
     })
+    
   })
 
+  // Handle remote stream control on request
+  peer.on('data', (data) => {
+    // Parse data from Uint8Array
+    const parsedData = peerDataParse(data)
+    // Data structure will be
+    // {
+    //   type: '(something)'
+    // }
+
+    switch(parsedData.type) {
+      case 'camera-off':
+        remoteVideoTrack = window.remoteStream.getVideoTracks()
+
+        if (remoteVideoTrack.length > 0) {
+          remoteVideoTrack = remoteVideoTrack[0]
+          remoteVideoTrack.enabled = false
+          remoteCameraOn = false
+          remoteOverlay.attr('src', '../assets/poster/camera-off.png')
+          remoteOverlay.show()
+          remoteVideo.style.display = 'none'
+
+        } else {
+          console.error(new Error('No Video Track'))
+        }
+        break
+      case 'camera-on':
+        remoteVideoTrack = window.remoteStream.getVideoTracks()
+
+        if (remoteVideoTrack.length > 0) {
+          remoteVideoTrack = remoteVideoTrack[0]
+          remoteVideoTrack.enabled = true
+          remoteCameraOn = true
+          remoteOverlay.hide()
+          remoteVideo.style.display = 'block'
+        } else {
+          console.error(new Error('No Video Track'))
+        }
+        break
+      case 'mic-off':
+        remoteAudioTrack = window.remoteStream.getAudioTracks()
+
+        if (remoteAudioTrack.length > 0) {
+          remoteAudioTrack = remoteAudioTrack[0]
+          remoteAudioTrack.enabled = false
+
+          console.log({remoteCameraOn})
+          if (!remoteCameraOn) {
+            remoteOverlay.attr('src', '../assets/poster/camera-mic-off.png')
+            remoteOverlay.show()
+            remoteVideo.style.display = 'none'
+          }
+        } else {
+          console.error(new Error('No Video Track'))
+        }
+        break
+      case 'mic-on':
+        remoteAudioTrack = window.remoteStream.getAudioTracks()
+
+        if (remoteAudioTrack.length > 0) {
+          remoteAudioTrack = remoteAudioTrack[0]
+          remoteAudioTrack.enabled = true
+
+          if (!remoteCameraOn) {
+            remoteOverlay.attr('src', '../assets/poster/camera-off.png')
+            remoteOverlay.show()
+            remoteVideo.style.display = 'none'
+          }
+        } else {
+          console.error(new Error('No Video Track'))
+        }
+        break
+      default:
+        console.log('Invalid')
+    }
+  })
 
   $('.room-id-container a').attr('href', `/?roomid=${roomid}`).text(roomid)
     
@@ -404,28 +498,80 @@ $(function() {
   // Buttons
   // Camera toggle
   $('.camera-div button').on('click', function() {
-    if (!cameraOn) {
-      $('.camera-div img').attr('src', '../assets/icons/camera-video-fill.svg')
-      cameraOn = true
-    } else {
-      $('.camera-div img').attr('src', '../assets/icons/camera-video-off-fill.svg')
-      cameraOn = false
+    if (window.isCall) {
+      if (!cameraOn) {
+        let videoTrack = window.localStream.getVideoTracks()
+        if (videoTrack.length > 0) {
+          videoTrack = videoTrack[0]
+          videoTrack.enabled = true
+          localOverlay.hide()
+          localVideo.style.display = 'block'
+          peerDataSend({type: 'camera-on'})
+        } else (
+          console.error(new Error('No Video Track'))
+        )
+  
+        $('.camera-div img').attr('src', '../assets/icons/camera-video-fill.svg')
+        cameraOn = true
+  
+      } else {
+        let videoTrack = window.localStream.getVideoTracks()
+        if (videoTrack.length > 0) {
+          videoTrack = videoTrack[0]
+          videoTrack.enabled = false
+          localOverlay.attr('src', '../assets/poster/camera-off.png')
+          localOverlay.show()
+          localVideo.style.display = 'none'
+          peerDataSend({type: 'camera-off'})
+        } else {
+          console.error(new Error('No Video Track'))
+        }
+  
+        $('.camera-div img').attr('src', '../assets/icons/camera-video-off-fill.svg')
+        cameraOn = false
+      }
     }
   })
   // Microphone toggle
   $('.mic-div button').on('click', function() {
-    if (!micrphoneOn) {
-      $('.mic-div img').attr('src', '../assets/icons/mic-fill.svg')
-      micrphoneOn = true
-    } else {
-      $('.mic-div img').attr('src', '../assets/icons/mic-mute-fill.svg')
-      micrphoneOn = false
+    if (window.isCall) {
+      if (!micrphoneOn) {
+        let audioTrack = window.localStream.getAudioTracks()
+        if (audioTrack.length > 0) {
+          audioTrack = audioTrack[0]
+          audioTrack.enabled = true
+          peerDataSend({type: 'mic-on'})
+          if (!cameraOn) {
+            localOverlay.attr('src', '../assets/poster/camera-off.png')
+            localVideo.style.display = 'none'
+          }
+        }
+  
+        $('.mic-div img').attr('src', '../assets/icons/mic-fill.svg')
+        micrphoneOn = true
+  
+      } else {
+        let audioTrack = window.localStream.getAudioTracks()
+        if (audioTrack.length > 0) {
+          audioTrack = audioTrack[0]
+          audioTrack.enabled = false
+          peerDataSend({type: 'mic-off'})
+          if (!cameraOn) {
+            localOverlay.attr('src', '../assets/poster/camera-mic-off.png')
+            localVideo.style.display = 'none'
+          }
+        }
+  
+        $('.mic-div img').attr('src', '../assets/icons/mic-mute-fill.svg')
+        micrphoneOn = false
+      }
     }
   })
   // Leave
   $('.leave-div button').on('click', function() {
     const choice = confirm('Are you sure you want to leave?')
     if (choice) {
+      peer.destroy()
       window.location.href = '/'
     }
   })
@@ -435,7 +581,6 @@ $(function() {
       const {overlay, accept, decline} = overlayConfim('End Call?')
 
       accept.on('click', function() {
-        // TODO: Implement end call
         overlay.remove()
         endCall()
       })
