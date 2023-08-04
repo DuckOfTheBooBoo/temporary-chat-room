@@ -5,38 +5,46 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="mobile/chat-videocall-mobile.css">
+    <link rel="stylesheet" href="spinner.css">
     <title>Chat</title>
 </head>
 <body>
     <div class="room-id-container">
-        <p>Room ID: <span></span></p>
+        <p>Room ID: <span><a href="#" target="_blank"></a></span></p>
     </div>
     <div class="video-frame">
-        <div class="video" id="video-div-own">
-            <video autoplay mute></video>
-            <p>Username own</p>
-        </div>
+        <div class="message-overlay"></div>
         <div class="video" id="video-div-foreign">
-            <video src="" autoplay></video>
+            <video autoplay></video>
             <p>Username foreign</p>
+            <div class="poster-overlay-foreign">
+                <img src="../assets/poster/no-connection.png" alt="">
+            </div>
+        </div>
+        <div class="video" id="video-div-own">
+            <video autoplay muted></video>
+            <p>Username own</p>
+            <div class="poster-overlay-own">
+                <img src="../assets/poster/camera-mic-off.png" alt="">
+            </div>
         </div>
     </div>
     <div class="buttons-container">
         <div class="camera-div btn">
-            <button><img src="../../assets/icons/camera-video-off-fill.svg"></button>
+            <button><img src="../assets/icons/camera-video-off-fill.svg"></button>
         </div>
         <div class="mic-div btn">
-            <button><img src="../../assets/icons/mic-mute-fill.svg"></button>
+            <button><img src="../assets/icons/mic-mute-fill.svg"></button>
             
         </div>
         <div class="chat-div btn">
             <div class="unread-msg">
                 <p></p>
             </div>
-            <button><img src="../../assets/icons/message-solid.svg"></button>
+            <button><img src="../assets/icons/message-solid.svg"></button>
         </div>
         <div class="leave-div btn">
-            <button><img src="../../assets/icons/right-from-bracket-solid.svg"></button>
+            <button><img src="../assets/icons/right-from-bracket-solid.svg"></button>
         </div>
     </div>
     <div class="bottom-sheet">
@@ -47,13 +55,14 @@
             <div class="chats"></div>
             <form action="" id="form-message" autocomplete="off">
                 <input type="text" placeholder="Message" id="message-field" name="message">
-                <button type="submit" id="subtmit-btn"><img src="../../assets/icons/paper-plane-solid.svg"></button>
+                <button type="submit" id="subtmit-btn"><img src="../assets/icons/paper-plane-solid.svg"></button>
             </form>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.0.slim.js" integrity="sha256-7GO+jepT9gJe9LB4XFf8snVOjX3iYNb0FHYr5LI1N5c=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.11.2/qs.min.js" integrity="sha512-vCegEXqPUYpZsTGz2lk0jaQ1psxtFeniVJACAXhMVxuoYa/N4nZkjoVFOxLwP7uGeQOoemiz7DQrIpRTj4IBPw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="../../scripts/simplepeer.min.js"></script>
     <script src="mobile/chat-videocall-mobile.js"></script>
 </body>
 </html>

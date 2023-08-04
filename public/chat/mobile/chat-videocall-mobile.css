@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;800&display=swap');
 
+html {
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+
 body {
     font-family: 'Noto Sans', sans-serif;
     padding: 0;
@@ -30,6 +39,9 @@ body {
     border-radius: 20px;
     overflow: hidden;
     flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .video p {
@@ -41,10 +53,11 @@ body {
     margin: 10px;
 }
 
-video {
-    width: 100%;
+.video video {
+    width: auto;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    position: absolute;
 }
 
 .buttons-container {
@@ -265,4 +278,89 @@ video {
     width: 100%;
     border-radius: 10px;
     transition: bottom 0.3s ease-in-out;
+}
+
+
+.poster-overlay-own, .poster-overlay-foreign {
+    position: absolute;
+}
+
+.poster-overlay-foreign {
+    top: 50px;
+    left: 70px;
+}
+
+.poster-overlay-own {
+    top: 50px;
+    left: 70px;
+}
+
+.loading {
+    display: flex;
+    box-sizing: border-box;
+    color: white;
+    position: absolute;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    width: 100%;
+    height: 86%;
+    z-index: 1;
+}
+
+.message {
+    display: flex;
+    box-sizing: border-box;
+    color: white;
+    position: absolute;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    width: 100%;
+    height: 86%;
+    z-index: 1;
+}
+
+.message-overlay p {
+    font-size: larger;
+    font-weight: bold;
+}
+
+.message-overlay .buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.message-overlay .buttons button {
+    padding: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.message-overlay .buttons button:hover {
+    cursor: pointer;
+}
+
+.btn-decline {
+    background-color: red;
+}
+
+.btn-decline:hover {
+    background-color: rgba(255, 0, 0, 0.814);
+}
+
+.btn-accept {
+    background-color: rgb(57,173,72);
+}
+
+.btn-accept:hover {
+    background-color: rgba(57, 173, 72, 0.805);
 }
