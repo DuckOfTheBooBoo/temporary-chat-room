@@ -62,6 +62,34 @@ $(function() {
     $('.chats').append(chatContainer)
   }
   
+  function greenCallButton() {
+    $('.call-div button').each(function() {
+      $(this).css({
+        'background-color': '#00c919',
+        filter: 'none',
+        border: '1px solid #00c919'
+      });
+      $(this).find('img').attr('src', '../assets/icons/phone-solid.svg');
+      $(this).on('mouseenter', function() {
+        $(this).css('cursor', 'pointer')
+      })  
+    })
+  }
+
+  function redCallButton() {
+    $('.call-div button').each(function() {
+      $(this).css({
+        'background-color': 'rgb(255,0,0)',
+        filter: 'none',
+        border: '1px solid rgb(255,0,0)'
+      });
+      $(this).find('img').attr('src', '../assets/icons/phone-slash-solid.svg');
+      $(this).on('mouseenter', function() {
+        $(this).css('cursor', 'pointer')
+      })  
+    })
+  }
+  
   function overlayConfim(msg, acceptMsg = 'Yes', declineMsg = 'No') {
     function genId() {
       const chars = 'abcdefghijklmnopqrstuvwxyz'
@@ -132,23 +160,11 @@ $(function() {
   }
 
   function startCall() {
-    window.startCallCalled += 1
-    $('.call-div button').each(function() {
-      $(this).css({
-        'background-color': 'rgb(255,0,0)',
-        filter: 'none',
-        border: '1px solid rgb(255,0,0)'
-      });
-      $(this).find('img').attr('src', '../assets/icons/phone-slash-solid.svg');
-      $(this).on('mouseenter', function() {
-        $(this).css('cursor', 'pointer')
-      })  
-    })
-
     navigator.mediaDevices.getUserMedia({
       audio: true,
       video: true
     }).then(stream => {
+      redCallButton()
       window.localStream = stream
       const localVideo = document.querySelector('#video-div-own video')
       localVideo.srcObject = stream
@@ -167,7 +183,6 @@ $(function() {
 
       const loadingWaitCall = loadingOverlay('Waiting for answer')
 
-      let i = 0
       socket.on('call-accept', () => {
         i += 1
 
@@ -202,24 +217,11 @@ $(function() {
   }
 
   function callAnswer() {
-    // $('.message').remove()
-    window.callAnswerCalled =+ 1
     socket.emit('call-accept')
-
-    $('.call-div button').each(function() {
-      $(this).css({
-        'background-color': 'rgb(255,0,0)',
-        filter: 'none',
-        border: '1px solid rgb(255,0,0)'
-      });
-      $(this).find('img').attr('src', '../assets/icons/phone-slash-solid.svg');
-      $(this).on('mouseenter', function() {
-        $(this).css('cursor', 'pointer')
-      })  
-    })
     
     navigator.mediaDevices.getUserMedia({audio: true, video: true})
       .then((stream) => {
+        redCallButton()
         window.localStream = stream
         localPoster.hide()
         const localVideo = document.querySelector('#video-div-own video')
@@ -251,6 +253,7 @@ $(function() {
     remotePoster.show()
     socket.emit('call-end') 
     eventUnsubscribe()
+    greenCallButton()
   }
   
   function eventUnsubscribe() {
@@ -262,7 +265,7 @@ $(function() {
   }
 
   function peerDataParse(data) {
-    const value  = new TextDecoder().decode(data)
+    const value = new TextDecoder().decode(data)
     return JSON.parse(value)
   }
 
