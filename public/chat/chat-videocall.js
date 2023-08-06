@@ -510,6 +510,15 @@ $(function() {
     }
   })
 
+  peer.on('error', (err) => {
+    alert('Error occurred, check log')
+    console.error(err)
+  })
+
+  peer.on('close', () => {
+    console.log('Connection closed')
+  })
+
   $('.room-id-container a').attr('href', `/?roomid=${roomid}`).text(roomid)
     
   socket.on('call-request', () => {
