@@ -61,7 +61,7 @@ $(function() {
 
     $('.chats').append(chatContainer)
   }
-  
+
   function greenCallButton() {
     $('.call-div button').each(function() {
       $(this).css({
@@ -184,24 +184,20 @@ $(function() {
       const loadingWaitCall = loadingOverlay('Waiting for answer')
 
       socket.on('call-accept', () => {
-        i += 1
-
+        console.log('Call accepted')
+        ringingAudio.pause()
         document.body.removeChild(ringingAudio)
         ringingAudio = null
-
-        console.log('Call request:', i)
-        console.log('Declaring event listener for call answered')
+        
         loadingWaitCall.remove()
+        console.log('Declaring event listener for call answered')
         console.log('Call answered')
   
-        peer.addStream(window.localStream)
+        peer.addStream(stream)
         
         socket.on('call-end-remote', () => {
           console.log('Declaring event listener for end call event')
-          peer.removeStream(window.localStream)
-          console.log('Call closed')
-          window.isCall = false
-          purgeMedia()
+          endCall()
         })
       })
 
@@ -226,16 +222,12 @@ $(function() {
         localPoster.hide()
         const localVideo = document.querySelector('#video-div-own video')
         localVideo.srcObject = window.localStream
-        peer.addStream(window.localStream)
+        peer.addStream(stream)
         window.isCall = true
 
         socket.on('call-end-remote', () => {
             console.log('Declaring event listener for end call event')
-            peer.removeStream(window.localStream)
-            console.log('Peer closed')
-            window.isCall = false
-            purgeMedia()
-            // eventUnsubscribe()
+            endCall()
           })
       })
       .catch((err) => {
@@ -259,7 +251,7 @@ $(function() {
   function eventUnsubscribe() {
     // Unsubscribe to event listeners
     console.log('Unsubscribing event listeners')
-    socket.off('call-answer')
+    socket.off('call-accept')
     socket.off('call-decline')
     socket.off('call-end-remote')
   }
