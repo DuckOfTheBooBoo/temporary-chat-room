@@ -152,7 +152,7 @@ $(function() {
       window.localStream = stream
       const localVideo = document.querySelector('#video-div-own video')
       localVideo.srcObject = stream
-      localOverlay.hide()
+      localPoster.hide()
       console.log('Calling peer')
 
       socket.emit('call-request')
@@ -221,7 +221,7 @@ $(function() {
     navigator.mediaDevices.getUserMedia({audio: true, video: true})
       .then((stream) => {
         window.localStream = stream
-        localOverlay.hide()
+        localPoster.hide()
         const localVideo = document.querySelector('#video-div-own video')
         localVideo.srcObject = window.localStream
         peer.addStream(window.localStream)
@@ -247,9 +247,9 @@ $(function() {
     console.log('Peer closed')
     window.isCall = false
     purgeMedia()
-    localOverlay.show()
-    remoteOverlay.show()
-    socket.emit('call-end')
+    localPoster.show()
+    remotePoster.show()
+    socket.emit('call-end') 
     eventUnsubscribe()
   }
   
@@ -315,8 +315,8 @@ $(function() {
   let remoteAudioTrack = undefined
   let remoteCameraOn = true
   let notificationPlayer = undefined
-  const localOverlay = $('.poster-overlay-own img')
-  const remoteOverlay = $('.poster-overlay-foreign img')
+  const localPoster = $('.poster-overlay-own img')
+  const remotePoster = $('.poster-overlay-foreign img')
   window.callAnswerCalled = 0
   window.startCallCalled = 0
   
@@ -381,7 +381,7 @@ $(function() {
 
   peer.on('stream', (remoteStream) => {
     console.log('Declaring event listener for incoming remote stream')
-    remoteOverlay.hide()
+    remotePoster.hide()
     window.remoteStream = remoteStream
     remoteVideo.srcObject = window.remoteStream
     window.isCall = true
@@ -389,6 +389,7 @@ $(function() {
   
   peer.on('connect', () => {
     console.log('Connected')
+    remotePoster.hide()
     loading.remove()
   
     const {overlay: startCallOverlay, accept, decline} = overlayConfim('Start Call?')
@@ -451,8 +452,8 @@ $(function() {
           remoteVideoTrack = remoteVideoTrack[0]
           remoteVideoTrack.enabled = false
           remoteCameraOn = false
-          remoteOverlay.attr('src', '../assets/poster/camera-off.png')
-          remoteOverlay.show()
+          remotePoster.attr('src', '../assets/poster/camera-off.png')
+          remotePoster.show()
           remoteVideo.style.display = 'none'
 
         } else {
@@ -466,7 +467,7 @@ $(function() {
           remoteVideoTrack = remoteVideoTrack[0]
           remoteVideoTrack.enabled = true
           remoteCameraOn = true
-          remoteOverlay.hide()
+          remotePoster.hide()
           remoteVideo.style.display = 'block'
         } else {
           console.error(new Error('No Video Track'))
@@ -481,8 +482,8 @@ $(function() {
 
           console.log({remoteCameraOn})
           if (!remoteCameraOn) {
-            remoteOverlay.attr('src', '../assets/poster/camera-mic-off.png')
-            remoteOverlay.show()
+            remotePoster.attr('src', '../assets/poster/camera-mic-off.png')
+            remotePoster.show()
             remoteVideo.style.display = 'none'
           }
         } else {
@@ -497,8 +498,8 @@ $(function() {
           remoteAudioTrack.enabled = true
 
           if (!remoteCameraOn) {
-            remoteOverlay.attr('src', '../assets/poster/camera-off.png')
-            remoteOverlay.show()
+            remotePoster.attr('src', '../assets/poster/camera-off.png')
+            remotePoster.show()
             remoteVideo.style.display = 'none'
           }
         } else {
@@ -546,7 +547,7 @@ $(function() {
         if (videoTrack.length > 0) {
           videoTrack = videoTrack[0]
           videoTrack.enabled = true
-          localOverlay.hide()
+          localPoster.hide()
           localVideo.style.display = 'block'
           peerDataSend({type: 'camera-on'})
         } else (
@@ -561,8 +562,8 @@ $(function() {
         if (videoTrack.length > 0) {
           videoTrack = videoTrack[0]
           videoTrack.enabled = false
-          localOverlay.attr('src', '../assets/poster/camera-off.png')
-          localOverlay.show()
+          localPoster.attr('src', '../assets/poster/camera-off.png')
+          localPoster.show()
           localVideo.style.display = 'none'
           peerDataSend({type: 'camera-off'})
         } else {
@@ -584,7 +585,7 @@ $(function() {
           audioTrack.enabled = true
           peerDataSend({type: 'mic-on'})
           if (!cameraOn) {
-            localOverlay.attr('src', '../assets/poster/camera-off.png')
+            localPoster.attr('src', '../assets/poster/camera-off.png')
             localVideo.style.display = 'none'
           }
         }
@@ -599,7 +600,7 @@ $(function() {
           audioTrack.enabled = false
           peerDataSend({type: 'mic-off'})
           if (!cameraOn) {
-            localOverlay.attr('src', '../assets/poster/camera-mic-off.png')
+            localPoster.attr('src', '../assets/poster/camera-mic-off.png')
             localVideo.style.display = 'none'
           }
         }
